@@ -244,7 +244,7 @@ def get_data(args):
 
     if 'isic' in data_str.lower():
         ############# Load training data
-        data_train_root = 'root for /ISIC2017/Training'
+        data_train_root = 'root for /private/datasets/ISIC/Training_Data/'
         data_train_add_root = 'root for /ISIC2017/Training_addition'
         train_dataset_label = MyDataSet_seg(data_train_root, None, crop_size=(args.w, args.h))
         train_dataset_unlabel = MyDataSet_seg(data_train_add_root, None, crop_size=(args.w, args.h),
