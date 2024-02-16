@@ -59,9 +59,10 @@ def get_cls_label(args):
                      '/home/ank029/private/datasets/ISIC/Test_v2_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
         for cls_file in csv_files:
             with open(cls_file, 'r') as csvfile:
-                csvreader = csv.reader(cls_file)
+                csvreader = csv.reader(csvfile)
                 next(csvreader)
                 for line in csvreader:
+                    print(line)
                     image_id = line[0]
                     if int(line[1]) == 1:
                         label = 0
