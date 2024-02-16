@@ -12,7 +12,7 @@ def clean(exp_name):
         shutil.rmtree(log_root)
 
     if not os.path.exists('./history/{}/'.format(get_month_day())):
-        os.mkdir('./history/{}/'.format(get_month_day()))
+        os.makedirs('./history/{}/'.format(get_month_day()))
 
     os.mkdir(log_root)
 
