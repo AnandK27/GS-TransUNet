@@ -1,5 +1,6 @@
 import torch
 import numpy as np
+import csv
 
 def random_resize(args, image, label):
 
@@ -21,6 +22,26 @@ def random_resize(args, image, label):
 
 def get_cls_label(args):
 
+    # if 'ph' in args.data:
+    #     dic = {}
+    #     cls_file = '/home/db/Joint-seg-cls-jhu/joint-seg-cls-dataset/PH2/cls_label.txt'
+    #     lines = open(cls_file, 'r').readlines()
+    #     for line in lines:
+    #         line = line.strip()
+    #         image_id, label = line.split()
+    #         dic[image_id] = label
+    #     return dic
+
+    # elif 'isic' in args.data:
+    #     dic = {}
+    #     cls_file = '/home/db/Joint-seg-cls-jhu/joint-seg-cls-dataset/ISIC2017/cls_label.txt'
+    #     lines = open(cls_file, 'r').readlines()
+    #     for line in lines:
+    #         line = line.strip()
+    #         image_id, label = line.split()
+    #         dic[image_id]= label
+    #     return dic
+
     if 'ph' in args.data:
         dic = {}
         cls_file = '/home/db/Joint-seg-cls-jhu/joint-seg-cls-dataset/PH2/cls_label.txt'
@@ -33,14 +54,23 @@ def get_cls_label(args):
 
     elif 'isic' in args.data:
         dic = {}
-        cls_file = '/home/db/Joint-seg-cls-jhu/joint-seg-cls-dataset/ISIC2017/cls_label.txt'
-        lines = open(cls_file, 'r').readlines()
-        for line in lines:
-            line = line.strip()
-            image_id, label = line.split()
-            dic[image_id] = label
+        csv_files = ['/home/ank029/private/datasets/ISIC/Training_Data/ISIC-2017_Training_Part3_GroundTruth.csv', 
+                     '/home/ank029/private/datasets/ISIC/Validation_Data/ISIC-2017_Validation_Part3_GroundTruth.csv',
+                     '/home/ank029/private/datasets/ISIC/Test_v2_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
+        for cls_file in csv_files:
+            with open(cls_file, 'r') as csvfile:
+                csvreader = csv.reader(cls_file)
+                next(csvreader)
+                for line in csvreader:
+                    image_id = line[0]
+                    if int(line[1]) == 1:
+                        label = 0
+                    elif int(line[2]) == 1:
+                        label = 1
+                    else:
+                        label = 2
+                    dic[image_id] = label
         return dic
-
 
 def name_list_to_cls_label(name_list, label_dic):
     # determine what attribute to use

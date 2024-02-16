@@ -26,8 +26,8 @@ class MyDataSet_seg(data.Dataset):
         self.crop_w, self.crop_h = crop_size
         self.label = label
 
-        self.ids = os.listdir(os.path.join(self.root_path, 'Images'))
-        self.img_ids = [f'/Images/{i} /Annotations/{i}' for i in self.ids]
+        self.ids = [i for i in os.listdir(os.path.join(self.root_path, 'ISIC-2017_Training_Data')) if i.endswith('JPG') or i.endswith('jpg')]
+        self.img_ids = [f'/ISIC-2017_Training_Data/{i} /ISIC-2017_Training_Part1_GroundTruth/{i[:-4] + '_segmentation.png'}' for i in self.ids]
 
         if not max_iters==None:
             self.img_ids = self.img_ids * int(np.ceil(float(max_iters) / len(self.img_ids)))
@@ -124,7 +124,7 @@ class MyDataSet_seg(data.Dataset):
 
         label = np.array(label)
         label = np.float32(label > 0)
-        name = datafiles["img"].split('/')[-1]
+        name = datafiles["img"].split('/')[-1][:-4]
 
         return image.copy(), label.copy(), name
 
@@ -138,8 +138,8 @@ class MyValDataSet_seg(data.Dataset):
         self.list_path = list_path
         self.crop_h, self.crop_w = crop_size
 
-        self.ids = os.listdir(os.path.join(self.root_path, 'Images'))
-        self.img_ids = [f'/Images/{i} /Annotations/{i}' for i in self.ids]
+        self.ids = [i for i in os.listdir(os.path.join(self.root_path, 'ISIC-2017_Validation_Data')) if i.endswith('JPG') or i.endswith('jpg')]
+        self.img_ids = [f'/ISIC-2017_Validation_Data/{i} /ISIC-2017_Validation_Part1_GroundTruth/{i[:-4] + '_segmentation.png'}' for i in self.ids]
 
         self.files = []
         for name in self.img_ids:
@@ -169,7 +169,7 @@ class MyValDataSet_seg(data.Dataset):
 
         label = np.array(label)
 
-        name = datafiles["img"].split('/')[0]
+        name = datafiles["img"].split('/')[-1][:-4]
 
         return image.copy(), label.copy(), name
 
@@ -182,8 +182,8 @@ class MyTestDataSet_seg(data.Dataset):
         self.list_path = list_path
         self.crop_h, self.crop_w = crop_size
 
-        self.ids = os.listdir(os.path.join(self.root_path, 'Images'))
-        self.img_ids = [f'/Images/{i} /Annotations/{i}' for i in self.ids]
+        self.ids = [i for i in os.listdir(os.path.join(self.root_path, 'ISIC-2017_Test_v2_Data')) if i.endswith('JPG') or i.endswith('jpg')]
+        self.img_ids = [f'/ISIC-2017_Test_v2_Data/{i} /ISIC-2017_Test_v2_Part1_GroundTruth/{i[:-4] + '_segmentation.png'}' for i in self.ids]
 
         self.files = []
         for index, name in enumerate(self.img_ids):
@@ -232,7 +232,7 @@ class MyTestDataSet_seg(data.Dataset):
         label2 = np.array(label2)
 
         # name = datafiles["img"][7:23]
-        name = datafiles["img"].split('/')[-1]
+        name = datafiles["img"].split('/')[-1][:-4]
 
 
         return image0.copy(), image1.copy(), image2.copy(), label0.copy(), name
@@ -244,8 +244,8 @@ def get_data(args):
 
     if 'isic' in data_str.lower():
         ############# Load training data
-        data_train_root = 'root for /private/datasets/ISIC/Training_Data/'
-        data_train_add_root = 'root for /ISIC2017/Training_addition'
+        data_train_root = '/home/ank029/private/datasets/ISIC/Training_Data/'
+        data_train_add_root = '/home/ank029/private/datasets/ISIC/Training_Data/'
         train_dataset_label = MyDataSet_seg(data_train_root, None, crop_size=(args.w, args.h))
         train_dataset_unlabel = MyDataSet_seg(data_train_add_root, None, crop_size=(args.w, args.h),
                                               label=False)
@@ -258,14 +258,14 @@ def get_data(args):
         trainloader = data.DataLoader(train_data, batch_sampler=batch_sampler, num_workers=8, pin_memory=True)
 
         ############# Load val data
-        data_val_root = 'root for /ISIC2017/Validation'
+        data_val_root = '/home/ank029/private/datasets/ISIC/Validation_Data/'
         valloader = data.DataLoader(MyValDataSet_seg(data_val_root, None, crop_size=(args.w, args.h)),
                                     batch_size=1, shuffle=False,
                                     num_workers=8,
                                     pin_memory=True)
 
         ############# Load testing data
-        data_test_root = 'root for /ISIC2017/Testing'
+        data_test_root = '/home/ank029/private/datasets/ISIC/Test_Data/'
         testloader = data.DataLoader(
             MyTestDataSet_seg(data_test_root, None, crop_size=(args.w, args.h)), batch_size=1,
             shuffle=False,
@@ -279,7 +279,7 @@ def get_data(args):
         }
 
     elif 'ph' in args.data_str.lower():
-        data_test_ph2_root = 'root for /PH2Dataset/PH2Dataset/PH2 Dataset images/'
+        data_test_ph2_root = '/home/ank029/private/datasets/PH2Dataset/PH2 Dataset images'
         # data_test_root_mask = 'Coarse_masks/Testing_EnhancedSN/'
         data_test_list = 'root for /ISIC/ph2_test.txt'
         testloader = data.DataLoader(
