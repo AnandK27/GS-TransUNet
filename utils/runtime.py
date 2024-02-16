@@ -56,13 +56,12 @@ def get_cls_label(args):
         dic = {}
         csv_files = ['/home/ank029/private/datasets/ISIC/Training_Data/ISIC-2017_Training_Part3_GroundTruth.csv', 
                      '/home/ank029/private/datasets/ISIC/Validation_Data/ISIC-2017_Validation_Part3_GroundTruth.csv',
-                     '/home/ank029/private/datasets/ISIC/Test_v2_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
+                     '/home/ank029/private/datasets/ISIC/Test_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
         for cls_file in csv_files:
             with open(cls_file, 'r') as csvfile:
                 csvreader = csv.reader(csvfile)
                 next(csvreader)
                 for line in csvreader:
-                    print(line)
                     image_id = line[0]
                     if float(line[1]) == 1:
                         label = 0
