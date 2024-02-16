@@ -144,23 +144,23 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             nevus[1] += 1
             if index == 0:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 nevus[0] += 1
                 melanoma_correct += 1
                 seborrheic_correct += 1
             elif index == 2:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(1)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 melanoma_correct += 1
             elif index == 1:
                 m_pred_binary.append(1)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 seborrheic_correct += 1
         elif cls_gt == 1:
             m_gt.append(1)
@@ -168,23 +168,23 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             melanoma[1] += 1
             if index == 1:
                 m_pred_binary.append(1)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 melanoma[0] += 1
                 seborrheic_correct += 1
                 melanoma_correct += 1
             elif index == 0:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 seborrheic_correct += 1
             elif index == 2:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(1)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
         elif cls_gt == 2:
             m_gt.append(0)
             s_gt.append(1)
@@ -192,23 +192,23 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             seborrheic[1] += 1
             if index == 2:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(1)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 seborrheic[0] += 1
                 melanoma_correct += 1
                 seborrheic_correct += 1
             elif index == 0:
                 m_pred_binary.append(0)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
                 melanoma_correct += 1
             elif index == 1:
                 m_pred_binary.append(1)
-                m_pred_prob.append(cls_prob[1])
+                m_pred_prob.append(cls_prob[1].cpu().detach())
                 s_pred_binary.append(0)
-                s_pred_prob.append(cls_prob[2])
+                s_pred_prob.append(cls_prob[2].cpu().detach())
 
 
         index_str = str(int(image_index))
@@ -236,14 +236,14 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
 
     dic = {}
 
-    acc, auc, AP, sens, spec = cla_evaluate(np.array(m_gt.cpu().detach()), np.array(m_pred_binary.cpu().detach()), np.array(m_pred_prob.cpu().detach()))
+    acc, auc, AP, sens, spec = cla_evaluate(np.array(m_gt), np.array(m_pred_binary), np.array(m_pred_prob))
     if logging is not None:
         logging.info(f'macc: {acc} | mauc: {auc} | mAP: {AP} | msens: {sens} | mspec: {spec}')
 
     dic['macc'], dic['mauc'], dic['msens'], dic['mspec'] = acc, auc, sens, spec
 
     if not ph2:
-        acc, auc, AP, sens, spec = cla_evaluate(np.array(s_gt.cpu().detach()), np.array(s_pred_binary.cpu().detach()), np.array(s_pred_prob.cpu().detach()))
+        acc, auc, AP, sens, spec = cla_evaluate(np.array(s_gt), np.array(s_pred_binary), np.array(s_pred_prob))
         logging.info(f'sacc: {acc} | sauc: {auc} | sAP: {AP} | ssens: {sens} | sspec: {spec}')
 
     dic['sacc'], dic['sauc'], dic['ssens'], dic['sspec'] = acc, auc, sens, spec
