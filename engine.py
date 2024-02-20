@@ -1,4 +1,5 @@
 import sys
+import os
 import time
 import logging
 import numpy as np
@@ -27,11 +28,11 @@ weight_ce_loss_for_class_m = nn.CrossEntropyLoss(weight=torch.Tensor([1.0, 1.0, 
 label_smooth_ce_loss = MyLabelSmoothingLoss(classes=2, smoothing=0.0)
 
 def init_program(args):
-    clean(args.exp_name)
+    args.pretrain, args.epoch_done = clean(args.exp_name)
     backup(args.exp_name)
 
-    writer = SummaryWriter('./history/{}/'.format(get_month_day()) + args.exp_name)
-    logging.basicConfig(filename="./history/{}/{}/log.txt".format(get_month_day(), args.exp_name), level=logging.INFO,
+    writer = SummaryWriter('./history/' + args.exp_name)
+    logging.basicConfig(filename="./history/{}/log.txt".format(args.exp_name), level=logging.INFO,
                         format='[%(asctime)s.%(msecs)03d] %(message)s', datefmt='%H:%M:%S')
     logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
     logging.info(str(args))
@@ -61,7 +62,7 @@ def trainer(args, model):
     best_val_jac = 0
     best_cls = 0
     iter_num = 0
-    for epoch in range(args.epoch):
+    for epoch in range(args.epoch_done, args.epoch):
         for i_iter, batch in tqdm(enumerate(trainloader)):
 
             test_flag = False
@@ -242,8 +243,7 @@ def trainer(args, model):
         if not test_flag:
             with torch.no_grad():
                 print('start val!')
-                [vacc, vdice, vsen, vspe, vjac_score] = val_mode_seg(valloader, model, './history/{}/'.format(
-                    get_month_day()) + args.exp_name, epoch)
+                [vacc, vdice, vsen, vspe, vjac_score] = val_mode_seg(valloader, model, './history/'+ args.exp_name, epoch)
                 logging.info("val%d: vacc=%f, vdice=%f, vsensitivity=%f, vspecifity=%f, vjac=%f \n" % \
                              (epoch, np.nanmean(vacc), np.nanmean(vdice), np.nanmean(vsen), np.nanmean(vspe),
                               np.nanmean(vjac_score)))
@@ -260,8 +260,7 @@ def trainer(args, model):
             [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
                                                                                                            testloader,
                                                                                                            model,
-                                                                                                           './history/{}/'.format(
-                                                                                                               get_month_day()) + args.exp_name,
+                                                                                                           './history/' + args.exp_name,
                                                                                                            test=True,
                                                                                                            ph2=args.ph2_test,
                                                                                                            logging=logging,
@@ -287,16 +286,21 @@ def trainer(args, model):
             if become_best_flag:
                 # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
                 torch.save(model.state_dict(),
-                           './history/{}/'.format(get_month_day()) + args.exp_name + '/best_model.pth')
+                           './history/' + args.exp_name + '/best_model.pth')
 
             if become_cls_best:
                 # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
                 torch.save(model.state_dict(),
-                           './history/{}/'.format(get_month_day()) + args.exp_name + '/best_cls_model.pth')
+                           './history/' + args.exp_name + '/best_cls_model.pth')
 
             if (epoch + 1) % 20 == 0:
+                #remove the last epoch model
+                for fname in os.listdir('./history/' + args.exp_name):
+                    if fname.startswith("last_epoch_"):
+                        os.remove(os.path.join('./history/' + args.exp_name, fname))
+                os.remove('./history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
                 torch.save(model.state_dict(),
-                           './history/{}/'.format(get_month_day()) + args.exp_name + '/last_epoch.pth')
+                           './history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
 
             writer.add_scalar('test/tacc', np.nanmean(vacc), epoch)
             writer.add_scalar('test/tdice', np.nanmean(vdice), epoch)

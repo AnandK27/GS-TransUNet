@@ -3,18 +3,23 @@ import shutil
 import datetime
 
 def clean(exp_name):
-    log_root = './history/{}/{}'.format(get_month_day(), exp_name)
+    log_root = './history/{}'.format(exp_name)
     if os.path.exists(log_root):
         answer = input('Find folder of the same name {}! Continue?[y/n]'.format(log_root))
         if 'y' not in answer:
             exit(0)
 
-        shutil.rmtree(log_root)
+        for fname in os.listdir('./history/' + exp_name):
+            if fname.startswith("last_epoch_"):
+                return fname, int(fname[:-4].split('_')[-1])
+        
 
-    if not os.path.exists('./history/{}/'.format(get_month_day())):
-        os.makedirs('./history/{}/'.format(get_month_day()))
+    if not os.path.exists('./history/'):
+        os.makedirs('./history/')
 
     os.mkdir(log_root)
+
+    return '', 0
 
 
 def get_all_py_file(root, py_list):
@@ -28,13 +33,13 @@ def get_all_py_file(root, py_list):
 
 
 def backup(exp_name):
-    os.mkdir('./history/{}/{}/backup_pyfile'.format(get_month_day(), exp_name))
+    os.mkdir('./history/{}/backup_pyfile'.format(exp_name))
     py_list = []
     get_all_py_file('.', py_list)
     print('py_list', py_list)
     for file in py_list:
         shutil.copy(file,
-            os.path.join('./history/{}/{}/backup_pyfile'.format(get_month_day(), exp_name), file.split('/')[-1]))
+            os.path.join('./history/{}/backup_pyfile'.format(exp_name), file.split('/')[-1]))
 
 month_day = None
 def get_month_day():
