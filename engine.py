@@ -298,7 +298,6 @@ def trainer(args, model):
                 for fname in os.listdir('./history/' + args.exp_name):
                     if fname.startswith("last_epoch_"):
                         os.remove(os.path.join('./history/' + args.exp_name, fname))
-                os.remove('./history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
                 torch.save(model.state_dict(),
                            './history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
 
