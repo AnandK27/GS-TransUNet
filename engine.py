@@ -62,7 +62,7 @@ def trainer(args, model):
     best_val_jac = 0
     best_cls = 0
     iter_num = 0
-    for epoch in range(args.epoch_done, args.epoch):
+    for epoch in range(args.epoch_done + 1, args.epoch):
         for i_iter, batch in tqdm(enumerate(trainloader)):
 
             test_flag = False
