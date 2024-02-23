@@ -33,7 +33,8 @@ def get_all_py_file(root, py_list):
 
 
 def backup(exp_name):
-    os.mkdir('./history/{}/backup_pyfile'.format(exp_name))
+    if not os.path.exists('./history/{}/backup_pyfile'.format(exp_name)):
+        os.mkdir('./history/{}/backup_pyfile'.format(exp_name))
     py_list = []
     get_all_py_file('.', py_list)
     print('py_list', py_list)
