@@ -5,9 +5,9 @@ import datetime
 def clean(exp_name):
     log_root = './history/{}'.format(exp_name)
     if os.path.exists(log_root):
-        answer = input('Find folder of the same name {}! Continue?[y/n]'.format(log_root))
-        if 'y' not in answer:
-            exit(0)
+        # answer = input('Find folder of the same name {}! Continue?[y/n]'.format(log_root))
+        # if 'y' not in answer:
+        #     exit(0)
 
         for fname in os.listdir('./history/' + exp_name):
             if fname.startswith("last_epoch_"):
