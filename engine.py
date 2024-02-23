@@ -293,7 +293,7 @@ def trainer(args, model):
                 torch.save(model.state_dict(),
                            './history/' + args.exp_name + '/best_cls_model.pth')
 
-            if (epoch + 1) % 20 == 0:
+            if (epoch + 1) % 10 == 0:
                 #remove the last epoch model
                 for fname in os.listdir('./history/' + args.exp_name):
                     if fname.startswith("last_epoch_"):
