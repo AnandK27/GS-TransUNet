@@ -320,6 +320,9 @@ def trainer(args, model):
             writer.add_scalar('test/cls_ssen', dic['ssens'], epoch)
             writer.add_scalar('test/cls_sspec', dic['sspec'], epoch)
 
+            writer.add_pr_curve('test/cls_mpr', dic['m_gt'], dic['m_pred_prob'], epoch)
+            writer.add_pr_curve('test/cls_spr', dic['s_gt'], dic['s_pred_prob'], epoch)
+
             if test_flag:
                 print('Finish Testing')
                 exit(0)

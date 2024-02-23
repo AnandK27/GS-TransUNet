@@ -240,13 +240,15 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
     if logging is not None:
         logging.info(f'macc: {acc} | mauc: {auc} | mAP: {AP} | msens: {sens} | mspec: {spec}')
 
-    dic['macc'], dic['mauc'], dic['msens'], dic['mspec'] = acc, auc, sens, spec
+    # dic['macc'], dic['mauc'], dic['msens'], dic['mspec'] = acc, auc, sens, spec
+    dic['macc'], dic['mauc'], dic['msens'], dic['mspec'], dic['m_gt'], dic['m_pred_binary'], dic['m_pred_prob'] = acc, auc, sens, spec, m_gt, m_pred_binary, m_pred_prob
 
     if not ph2:
         acc, auc, AP, sens, spec = cla_evaluate(np.array(s_gt), np.array(s_pred_binary), np.array(s_pred_prob))
         logging.info(f'sacc: {acc} | sauc: {auc} | sAP: {AP} | ssens: {sens} | sspec: {spec}')
 
-    dic['sacc'], dic['sauc'], dic['ssens'], dic['sspec'] = acc, auc, sens, spec
+    # dic['sacc'], dic['sauc'], dic['ssens'], dic['sspec'] = acc, auc, sens, spec
+    dic['sacc'], dic['sauc'], dic['ssens'], dic['sspec'], dic['s_gt'], dic['s_pred_binary'], dic['s_pred_prob'] = acc, auc, sens, spec, s_gt, s_pred_binary, s_pred_prob
 
     f.close()
     print('successfully record!')

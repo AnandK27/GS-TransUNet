@@ -64,11 +64,11 @@ def get_cls_label(args):
                 for line in csvreader:
                     image_id = line[0]
                     if float(line[1]) == 1:
-                        label = 0
-                    elif float(line[2]) == 1:
                         label = 1
-                    else:
+                    elif float(line[2]) == 1:
                         label = 2
+                    else:
+                        label = 0
                     dic[image_id] = label
         return dic
 
