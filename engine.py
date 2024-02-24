@@ -293,13 +293,12 @@ def trainer(args, model):
                 torch.save(model.state_dict(),
                            './history/' + args.exp_name + '/best_cls_model.pth')
 
-            if (epoch + 1) % 2 == 0:
-                #remove the last epoch model
-                for fname in os.listdir('./history/' + args.exp_name):
-                    if fname.startswith("last_epoch_"):
-                        os.remove(os.path.join('./history/' + args.exp_name, fname))
-                torch.save(model.state_dict(),
-                           './history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
+            #remove the last epoch model
+            for fname in os.listdir('./history/' + args.exp_name):
+                if fname.startswith("last_epoch_"):
+                    os.remove(os.path.join('./history/' + args.exp_name, fname))
+            torch.save(model.state_dict(),
+                        './history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
 
             writer.add_scalar('test/tacc', np.nanmean(vacc), epoch)
             writer.add_scalar('test/tdice', np.nanmean(vdice), epoch)
