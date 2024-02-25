@@ -455,11 +455,50 @@ class VisionTransformer(nn.Module):
         self.tanh = nn.Tanh()
         self.head = Linear(config.hidden_size, 3)
 
+    def gaussian_2d(self, input, h, w, threshold=0.01):
+
+        b = input.shape[0]
+        pts = 1
+        height_linspace = torch.linspace(0, h, h)
+        width_linspace = torch.linspace(0, w, w)
+        x = torch.stack(torch.meshgrid(height_linspace, width_linspace)).T
+        
+        x0, y0 = input[:, 0].reshape(-1, pts), input[:, 1].reshape(-1, pts)
+        mu = torch.einsum('ijk->jki', torch.stack((x0*h, y0*w)))
+        scale = input[:, 2:4].reshape(-1, pts, 2)
+        rot_angle = input[:, 4].reshape(-1, pts)
+
+        rotation = torch.zeros((b, pts, 2, 2))
+        rotation[:, :, 0, 0] = torch.cos(rot_angle[:])
+        rotation[:, :, 0, 1] = -torch.sin(rot_angle[:])
+        rotation[:, :, 1, 0] = torch.sin(rot_angle[:])
+        rotation[:, :, 1, 1] = torch.cos(rot_angle[:])
+
+        sigmas = torch.zeros((b, pts, 2, 2))
+        sigmas[:, :,0, 0] = scale[:,:, 0]
+        sigmas[:, :,1, 1] = scale[:,:,1]
+
+        sigmas = rotation @ sigmas @ sigmas.transpose(-1, -2) @ rotation.transpose(-1, -2)
+
+        x = x.reshape(-1, 2)
+        x = x.repeat(b, pts, 1,1)
+        mu = mu.repeat(x.shape[-2], 1, 1, 1)
+        mu = torch.einsum('ijkl->jkil', mu)
+        x_c = x - mu
+
+        res = torch.exp(torch.diagonal(-(x_c @ torch.inverse(sigmas) @ x_c.transpose(-1,-2)) /2, dim1=-1, dim2=-2))
+        res = (res - res.min(dim=-1, keepdim=True)[0]) / (res.max(dim=-1, keepdim=True)[0] - res.min(dim=-1, keepdim=True)[0])
+        res[res < threshold] = 0
+        
+        res = res.max(dim=-2)[0]
+        return res
 
     def forward(self, x):
         if x.size()[1] == 1:
             x = x.repeat(1,3,1,1)
         x, attn_weights, features = self.transformer(x)  # (B, n_patch, hidden)
+
+        print(x.shape)
 
         # # print('中间特征图的尺寸为',x.shape)
         # mask_x = x[:,:int(x.shape[1]/2),:]
