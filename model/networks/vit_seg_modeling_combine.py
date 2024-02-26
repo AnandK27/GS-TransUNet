@@ -451,6 +451,24 @@ class VisionTransformer(nn.Module):
             out_channels=1,
             kernel_size=3,
         )
+
+        self.gauss_head = nn.Sequential(
+            nn.Conv2d(16, 32, kernel_size=5, stride=2, padding=2),
+            nn.BatchNorm2d(32),
+            nn.ReLU(),
+            nn.Conv2d(32, 64, kernel_size=5, stride=2, padding=2),
+            nn.BatchNorm2d(64),
+            nn.ReLU(),
+            nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2),
+            nn.BatchNorm2d(128),
+            nn.ReLU(),
+            nn.Flatten(-2,-1),
+            nn.Linear(784, 2),
+            nn.ReLU(),
+            nn.Flatten(),
+            nn.Linear(128*2, 10),
+        )
+
         self.config = config
         self.tanh = nn.Tanh()
         self.head = Linear(config.hidden_size, 3)
@@ -465,8 +483,8 @@ class VisionTransformer(nn.Module):
         
         x0, y0 = input[:, 0].reshape(-1, pts), input[:, 1].reshape(-1, pts)
         mu = torch.einsum('ijk->jki', torch.stack((x0*h, y0*w)))
-        scale = input[:, 2:4].reshape(-1, pts, 2)
-        rot_angle = input[:, 4].reshape(-1, pts)
+        scale = input[:, 2:4].reshape(-1, pts, 2) * 10 + 1
+        rot_angle = input[:, 4].reshape(-1, pts) * math.pi/4
 
         rotation = torch.zeros((b, pts, 2, 2))
         rotation[:, :, 0, 0] = torch.cos(rot_angle[:])
@@ -494,11 +512,11 @@ class VisionTransformer(nn.Module):
         return res
 
     def forward(self, x):
+        b= x.size()[0]
         if x.size()[1] == 1:
             x = x.repeat(1,3,1,1)
         x, attn_weights, features = self.transformer(x)  # (B, n_patch, hidden)
 
-        print(x.shape)
 
         # # print('中间特征图的尺寸为',x.shape)
         # mask_x = x[:,:int(x.shape[1]/2),:]
@@ -514,7 +532,14 @@ class VisionTransformer(nn.Module):
 
 
         x = self.decoder(x[:, 1:, :], features)
-        mask_logits = self.segmentation_head(x)
+        #mask_logits = self.segmentation_head(x)
+
+        gaussian_features = self.gauss_head(x).reshape(b, -1, 5)
+        gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 224, 224)
+        gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 224, 224)
+
+        mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
+
         dt_logits  = self.dual_task_segmentation_head(x)
         dt_logits = self.tanh(dt_logits)
         # dt_x = self.dual_task_decoder(dt_x, features)
