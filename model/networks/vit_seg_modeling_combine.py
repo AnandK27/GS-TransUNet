@@ -466,7 +466,7 @@ class VisionTransformer(nn.Module):
             nn.Linear(784, 2),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(128*2, 10),
+            nn.Linear(128*2, 12),
         )
 
         self.config = config
@@ -509,7 +509,7 @@ class VisionTransformer(nn.Module):
         res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
-        return res
+        return res * input[:, 5].reshape(-1, 1)
 
     def forward(self, x):
         b= x.size()[0]
@@ -534,7 +534,7 @@ class VisionTransformer(nn.Module):
         x = self.decoder(x[:, 1:, :], features)
         #mask_logits = self.segmentation_head(x)
 
-        gaussian_features = self.gauss_head(x).reshape(b, -1, 5)
+        gaussian_features = self.gauss_head(x).reshape(b, -1, 6)
         gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 224, 224)
         gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 224, 224)
 
