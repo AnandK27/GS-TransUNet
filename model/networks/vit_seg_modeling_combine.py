@@ -541,7 +541,6 @@ class VisionTransformer(nn.Module):
         mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
         mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
-        print(mask_logits.shape, ds_mask_logits.shape)
 
         dt_logits  = self.dual_task_segmentation_head(x)
         dt_logits = self.tanh(dt_logits)
