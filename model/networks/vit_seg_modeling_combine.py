@@ -508,8 +508,8 @@ class VisionTransformer(nn.Module):
         res = (res - res.min(dim=-1, keepdim=True)[0]) / (res.max(dim=-1, keepdim=True)[0] - res.min(dim=-1, keepdim=True)[0])
         res[res < threshold] = 0
         
-        res = res.max(dim=-2)[0].reshape(b, h, w)
-        return res * input[:, 5].reshape(-1, 1)
+        res = res.max(dim=-2)[0]
+        return (res * input[:, 5].reshape(-1, 1)).reshape(b, h, w)
 
     def forward(self, x):
         b= x.size()[0]
