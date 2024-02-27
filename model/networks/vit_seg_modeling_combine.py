@@ -535,8 +535,8 @@ class VisionTransformer(nn.Module):
         #mask_logits = self.segmentation_head(x)
 
         gaussian_features = self.gauss_head(x).reshape(b, -1, 6)
-        gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 224, 224)
-        gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 224, 224)
+        gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 32, 32)
+        gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 32, 32)
 
         mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
 
