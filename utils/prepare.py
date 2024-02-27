@@ -13,6 +13,8 @@ def clean(exp_name):
             if fname.startswith("last_epoch_"):
                 return os.path.join('./history/' + exp_name, fname), int(fname[:-4].split('_')[-1])
         
+        return '', 0
+        
 
     if not os.path.exists('./history/'):
         os.makedirs('./history/')
