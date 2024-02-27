@@ -68,6 +68,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             hor_flip = torch.flip(data, [-1])
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
+            data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
             pred, _, cls_logits, att_maps, _ = model(data)
 
             now_att_maps = []
@@ -90,6 +91,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             hor_flip = torch.flip(data, [-1])
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
+            data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
             pred, _, cls_logits, att_maps, _ = model(data)
             pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
             result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
@@ -103,6 +105,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             hor_flip = torch.flip(data, [-1])
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
+            data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
             pred, _, cls_logits, att_maps, _ = model(data)
             pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
             result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
