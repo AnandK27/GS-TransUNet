@@ -479,20 +479,20 @@ class VisionTransformer(nn.Module):
         pts = 1
         height_linspace = torch.linspace(0, h, h)
         width_linspace = torch.linspace(0, w, w)
-        x = torch.stack(torch.meshgrid(height_linspace, width_linspace)).T
+        x = torch.stack(torch.meshgrid(height_linspace, width_linspace)).T.to(input.device)
         
         x0, y0 = input[:, 0].reshape(-1, pts), input[:, 1].reshape(-1, pts)
         mu = torch.einsum('ijk->jki', torch.stack((x0*h, y0*w)))
         scale = input[:, 2:4].reshape(-1, pts, 2) * 10 + 1
         rot_angle = input[:, 4].reshape(-1, pts) * math.pi/4
 
-        rotation = torch.zeros((b, pts, 2, 2))
+        rotation = torch.zeros((b, pts, 2, 2)).to(input.device)
         rotation[:, :, 0, 0] = torch.cos(rot_angle[:])
         rotation[:, :, 0, 1] = -torch.sin(rot_angle[:])
         rotation[:, :, 1, 0] = torch.sin(rot_angle[:])
         rotation[:, :, 1, 1] = torch.cos(rot_angle[:])
 
-        sigmas = torch.zeros((b, pts, 2, 2))
+        sigmas = torch.zeros((b, pts, 2, 2)).to(input.device)
         sigmas[:, :,0, 0] = scale[:,:, 0]
         sigmas[:, :,1, 1] = scale[:,:,1]
 
