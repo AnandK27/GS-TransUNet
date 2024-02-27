@@ -539,6 +539,7 @@ class VisionTransformer(nn.Module):
         gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 64, 64)
 
         mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
+        mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
         print(mask_logits.shape, ds_mask_logits.shape)
 
