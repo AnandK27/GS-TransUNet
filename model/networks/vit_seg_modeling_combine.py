@@ -464,7 +464,7 @@ class VisionTransformer(nn.Module):
             nn.ReLU(),
             nn.Flatten(),
             nn.Linear(25088, 6),
-            nn.ReLU(),
+            nn.LeakyReLU()
         )
 
         self.config = config
