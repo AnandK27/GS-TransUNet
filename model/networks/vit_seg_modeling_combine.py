@@ -459,11 +459,11 @@ class VisionTransformer(nn.Module):
             nn.Conv2d(32, 64, kernel_size=5, stride=2, padding=2),
             nn.BatchNorm2d(64),
             nn.ReLU(),
-            nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2),
+            nn.Conv2d(64, 128, kernel_size=5, stride=4, padding=2),
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(128*2, 7),
+            nn.Linear(50176, 7),
             nn.ReLU(),
         )
 
