@@ -515,7 +515,7 @@ class VisionTransformer(nn.Module):
         res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
-
+        print(res.shape)
         return (res).reshape(b, h, w)
 
     def forward(self, x):
