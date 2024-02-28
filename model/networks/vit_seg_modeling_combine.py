@@ -515,8 +515,7 @@ class VisionTransformer(nn.Module):
         res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
-        print(res.shape)
-        return (res).reshape(b, h, w)
+        return res
 
     def forward(self, x):
         b= x.size()[0]
@@ -547,7 +546,7 @@ class VisionTransformer(nn.Module):
             exit(0)
         gauss = self.gaussian_2d(gaussian_features[:, :], 64, 64)
 
-        mask_logits= torch.stack([gauss * gaussian_features[:,5], gauss * gaussian_features[:,6]], dim=1)
+        mask_logits= torch.stack([(gauss * gaussian_features[:,5]).reshape(b, 64, 64), (gauss * gaussian_features[:,6]).reshape(b, 64, 64)], dim=1)
         mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
 
