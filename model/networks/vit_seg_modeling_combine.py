@@ -463,7 +463,7 @@ class VisionTransformer(nn.Module):
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(25088, 7),
+            nn.Linear(25088, 6),
             nn.ReLU(),
         )
 
@@ -540,13 +540,13 @@ class VisionTransformer(nn.Module):
         x = self.decoder(x[:, 1:, :], features)
         #mask_logits = self.segmentation_head(x)
 
-        gaussian_features = self.gauss_head(x).reshape(b, 7)
+        gaussian_features = self.gauss_head(x).reshape(b, 6)
         if torch.isnan(gaussian_features).any():
             print('feature')
             exit(0)
         gauss = self.gaussian_2d(gaussian_features, 64, 64)
         print(gauss.shape, gaussian_features.shape)
-        mask_logits= torch.stack([(gauss * gaussian_features[:,5]).reshape(b, 64, 64), (gauss * gaussian_features[:,6]).reshape(b, 64, 64)], dim=1)
+        mask_logits= torch.stack([(gauss * gaussian_features[:,5]).reshape(b, 64, 64), (gauss * (1- gaussian_features[:,5])).reshape(b, 64, 64)], dim=1)
         mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
 
