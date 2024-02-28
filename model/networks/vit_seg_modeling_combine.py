@@ -509,6 +509,9 @@ class VisionTransformer(nn.Module):
         res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
+        if torch.isnan(res).any():
+            print('nan')
+            exit(0)
         return (res * input[:, 5].reshape(-1, 1)).reshape(b, h, w)
 
     def forward(self, x):
