@@ -459,11 +459,12 @@ class VisionTransformer(nn.Module):
             nn.Conv2d(32, 64, kernel_size=5, stride=2, padding=2),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(),
-            nn.Conv2d(64, 128, kernel_size=5, stride=4, padding=2),
-            nn.BatchNorm2d(128),
-            nn.ReLU(),
+            nn.Conv2d(64, 256, kernel_size=5, stride=4, padding=2),
+            nn.BatchNorm2d(256),
+            nn.LeakyReLU(),
+            nn.Conv2d(256, 256, kernel_size = 14, stride=1, padding=0),
             nn.Flatten(),
-            nn.Linear(25088, 5),
+            nn.Linear(256, 5),
             nn.Sigmoid()
         )
 
