@@ -544,6 +544,9 @@ class VisionTransformer(nn.Module):
         #mask_logits = self.segmentation_head(x)
 
         gaussian_features = self.gauss_head(x).reshape(b, -1, 6)
+        if torch.isnan(gaussian_features).any():
+            print('input')
+            exit(0)
         gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 64, 64)
         gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 64, 64)
 
