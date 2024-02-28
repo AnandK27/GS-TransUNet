@@ -455,16 +455,16 @@ class VisionTransformer(nn.Module):
         self.gauss_head = nn.Sequential(
             nn.Conv2d(16, 32, kernel_size=5, stride=2, padding=2),
             nn.BatchNorm2d(32),
-            nn.ReLU(),
+            nn.LeakyReLU(),
             nn.Conv2d(32, 64, kernel_size=5, stride=2, padding=2),
             nn.BatchNorm2d(64),
-            nn.ReLU(),
+            nn.LeakyReLU(),
             nn.Conv2d(64, 128, kernel_size=5, stride=4, padding=2),
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.Flatten(),
             nn.Linear(25088, 6),
-            nn.LeakyReLU()
+            nn.Sigmoid()
         )
 
         self.config = config
