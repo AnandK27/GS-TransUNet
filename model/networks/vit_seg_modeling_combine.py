@@ -540,7 +540,7 @@ class VisionTransformer(nn.Module):
         x = self.decoder(x[:, 1:, :], features)
         #mask_logits = self.segmentation_head(x)
 
-        gaussian_features = self.gauss_head(x).reshape(b, 6)
+        gaussian_features = self.gauss_head(x).reshape(b, 5)
         if torch.isnan(gaussian_features).any():
             print('feature')
             exit(0)
