@@ -46,6 +46,7 @@ def init_program(args):
 # a function that trains the model
 def trainer(args, model):
     writer = init_program(args)
+    torch.autograd.set_detect_anomaly(True)
 
     if args.pretrain != '':
         pretrained_dict = torch.load(args.pretrain)
