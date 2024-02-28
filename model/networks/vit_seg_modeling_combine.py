@@ -476,6 +476,9 @@ class VisionTransformer(nn.Module):
     def gaussian_2d(self, input, h, w, threshold=0.01):
 
         b = input.shape[0]
+        if torch.isnan(input).any():
+            print('input')
+            exit(0)
         pts = 1
         height_linspace = torch.linspace(0, h, h)
         width_linspace = torch.linspace(0, w, w)
@@ -497,21 +500,24 @@ class VisionTransformer(nn.Module):
         sigmas[:, :,1, 1] = scale[:,:,1]
 
         sigmas = rotation @ sigmas @ sigmas.transpose(-1, -2) @ rotation.transpose(-1, -2)
+        if torch.isnan(sigmas).any():
+            print('sigma')
+            exit(0)
 
         x = x.reshape(-1, 2)
         x = x.repeat(b, pts, 1,1)
         mu = mu.repeat(x.shape[-2], 1, 1, 1)
         mu = torch.einsum('ijkl->jkil', mu)
         x_c = x - mu
-
+        if torch.isnan(x_c).any():
+            print('x_c')
+            exit(0)
         res = torch.exp(torch.diagonal(-(x_c @ torch.inverse(sigmas) @ x_c.transpose(-1,-2)) /2, dim1=-1, dim2=-2))
         res = (res - res.min(dim=-1, keepdim=True)[0]) / (res.max(dim=-1, keepdim=True)[0] - res.min(dim=-1, keepdim=True)[0])
         res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
-        if torch.isnan(res).any():
-            print('nan')
-            exit(0)
+
         return (res * input[:, 5].reshape(-1, 1)).reshape(b, h, w)
 
     def forward(self, x):
