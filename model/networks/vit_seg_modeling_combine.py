@@ -462,11 +462,9 @@ class VisionTransformer(nn.Module):
             nn.Conv2d(64, 128, kernel_size=5, stride=2, padding=2),
             nn.BatchNorm2d(128),
             nn.ReLU(),
-            nn.Flatten(-2,-1),
-            nn.Linear(784, 2),
-            nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(128*2, 12),
+            nn.Linear(128*2, 7),
+            nn.ReLU(),
         )
 
         self.config = config
@@ -485,7 +483,7 @@ class VisionTransformer(nn.Module):
         x = torch.stack(torch.meshgrid(height_linspace, width_linspace)).T.to(input.device)
         
         x0, y0 = input[:, 0].reshape(-1, pts), input[:, 1].reshape(-1, pts)
-        mu = torch.einsum('ijk->jki', torch.stack((x0*h + h//2, y0*w + w//2)))
+        mu = torch.einsum('ijk->jki', torch.stack((x0*h, y0*w)))
         scale = input[:, 2:4].reshape(-1, pts, 2) * h + 1
         rot_angle = input[:, 4].reshape(-1, pts) * math.pi/4
 
@@ -518,7 +516,7 @@ class VisionTransformer(nn.Module):
         
         res = res.max(dim=-2)[0]
 
-        return (res * input[:, 5].reshape(-1, 1)).reshape(b, h, w)
+        return (res).reshape(b, h, w)
 
     def forward(self, x):
         b= x.size()[0]
@@ -543,14 +541,13 @@ class VisionTransformer(nn.Module):
         x = self.decoder(x[:, 1:, :], features)
         #mask_logits = self.segmentation_head(x)
 
-        gaussian_features = self.gauss_head(x).reshape(b, -1, 6)
+        gaussian_features = self.gauss_head(x).reshape(b, 7)
         if torch.isnan(gaussian_features).any():
             print('feature')
             exit(0)
-        gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 64, 64)
-        gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 64, 64)
+        gauss = self.gaussian_2d(gaussian_features[:, :], 64, 64)
 
-        mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
+        mask_logits= torch.stack([gauss * gaussian_features[:,5], gauss * gaussian_features[:,6]], dim=1)
         mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
 
