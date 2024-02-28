@@ -545,7 +545,7 @@ class VisionTransformer(nn.Module):
 
         gaussian_features = self.gauss_head(x).reshape(b, -1, 6)
         if torch.isnan(gaussian_features).any():
-            print('input')
+            print('feature')
             exit(0)
         gauss_1 = self.gaussian_2d(gaussian_features[:, 0, :], 64, 64)
         gauss_2 = self.gaussian_2d(gaussian_features[:, 1, :], 64, 64)
