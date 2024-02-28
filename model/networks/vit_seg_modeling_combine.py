@@ -545,7 +545,6 @@ class VisionTransformer(nn.Module):
             print('feature')
             exit(0)
         gauss = self.gaussian_2d(gaussian_features, 64, 64)
-        print(gauss.shape, gaussian_features[:,5].shape)
         gauss_1 = (gauss * gaussian_features[:,5:6]).reshape(b, 64, 64)
         gauss_2 = (gauss * (1- gaussian_features[:,5:6])).reshape(b, 64, 64)
         mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
