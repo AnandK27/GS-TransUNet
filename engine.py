@@ -172,7 +172,7 @@ def trainer(args, model):
                 loss += args.ac_loss * ac_loss
 
             if torch.isnan(loss):
-                print('nan')
+                print(preds)
                 continue
 
             iter_num += 1
