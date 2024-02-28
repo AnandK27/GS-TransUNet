@@ -463,7 +463,7 @@ class VisionTransformer(nn.Module):
             nn.BatchNorm2d(128),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(50176, 7),
+            nn.Linear(25088, 7),
             nn.ReLU(),
         )
 
