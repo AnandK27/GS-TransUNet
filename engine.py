@@ -160,9 +160,9 @@ def trainer(args, model):
                 loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf
             elif args.train_mode == 'seg+cls+dual':
                 if iter_num <= args.cls_late:
-                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf
+                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + 0.2 * gauss_center_loss
                 else:
-                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + args.cls_weight * cls_loss
+                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + args.cls_weight * cls_loss + 0.2 * gauss_center_loss
 
             if args.att_loss != 0:
                 loss += args.att_loss * attention_loss
