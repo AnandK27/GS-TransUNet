@@ -113,10 +113,13 @@ class MyDataSet_seg(data.Dataset):
 
         seed = np.random.randint(2147483647)
         random.seed(seed)
+        torch.manual_seed(seed)
         image = self.train_augmentation(image)
 
         random.seed(seed)
+        torch.manual_seed(seed)
         label = self.train_gt_augmentation(label)
+
 
         image = np.array(image) / 255.
         image = image.transpose((2, 0, 1))

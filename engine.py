@@ -74,7 +74,7 @@ def trainer(args, model):
 
             model.train()
             images, labels, name = batch
-            print(type(labels))
+
             images, labels = random_resize(args, images, labels)
 
             images = images.cuda()
