@@ -6,6 +6,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+import torchvision.transforms.functional as TF
 
 import torch
 from torch.utils import data
@@ -50,7 +51,6 @@ class MyDataSet_seg(data.Dataset):
                     "label": img_file,
                     "name": name
                 })
-
 
         self.train_augmentation = transforms.Compose(
             [
@@ -124,6 +124,7 @@ class MyDataSet_seg(data.Dataset):
 
         label = np.array(label)
         label = np.float32(label > 0)
+        print(type(label))
         name = datafiles["img"].split('/')[-1][:-4]
 
         return image.copy(), label.copy(), name
