@@ -462,9 +462,9 @@ class VisionTransformer(nn.Module):
             nn.Conv2d(64, 256, kernel_size=5, stride=4, padding=2),
             nn.BatchNorm2d(256),
             nn.Tanh(),
-            nn.Conv2d(256, 256*4, kernel_size = 14, stride=1, padding=0),
+            nn.Conv2d(256, 256*2, kernel_size = 14, stride=1, padding=0),
             nn.Flatten(),
-            nn.Linear(256*4, 5),
+            nn.Linear(256*2, 5),
             nn.Sigmoid()
         )
 
