@@ -465,7 +465,7 @@ class VisionTransformer(nn.Module):
             nn.Conv2d(256, 256*4, kernel_size = 14, stride=1, padding=0),
             nn.Flatten(),
             nn.Linear(256*4, 5),
-            nn.Sigmoid()
+            nn.LeakyReLU()
         )
 
         self.config = config
