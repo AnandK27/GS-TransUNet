@@ -464,7 +464,7 @@ class VisionTransformer(nn.Module):
             nn.Tanh(),
             nn.Conv2d(256, 256*2, kernel_size = 14, stride=1, padding=0),
             nn.Flatten(),
-            nn.Linear(256*2, 5),
+            nn.Linear(256*2, 6),
             nn.Sigmoid()
         )
 
@@ -485,8 +485,8 @@ class VisionTransformer(nn.Module):
         
         x0, y0 = input[:, 0].reshape(-1, pts), input[:, 1].reshape(-1, pts)
         mu = torch.einsum('ijk->jki', torch.stack(((x0)*h, (y0)*w)))
-        scale = torch.tile(input[:, 2:3].reshape(-1, pts, 1) * h/2 + 1, (1, 1, 2))
-        rot_angle = input[:, 3].reshape(-1, pts) * math.pi/4
+        scale = torch.tile(torch.stack(input[:, 2].reshape(-1, pts, 1) * h/2 + 1, input[:, 3].reshape(-1, pts, 1) * w/2 + 1), (1, 1, 2))
+        rot_angle = input[:, 4].reshape(-1, pts) * math.pi/4
 
         rotation = torch.zeros((b, pts, 2, 2)).to(input.device)
         rotation[:, :, 0, 0] = torch.cos(rot_angle[:])
@@ -541,13 +541,13 @@ class VisionTransformer(nn.Module):
         x = self.decoder(x[:, 1:, :], features)
         #mask_logits = self.segmentation_head(x)
 
-        gaussian_features = self.gauss_head(x).reshape(b, 5)
+        gaussian_features = self.gauss_head(x).reshape(b, 6)
         if torch.isnan(gaussian_features).any():
             print('feature')
             exit(0)
         gauss = self.gaussian_2d(gaussian_features, 64, 64)
-        gauss_1 = (gauss * gaussian_features[:,4:5]).reshape(b, 64, 64)
-        gauss_2 = (gauss * (1- gaussian_features[:,4:5])).reshape(b, 64, 64)
+        gauss_1 = (gauss * gaussian_features[:,5:6]).reshape(b, 64, 64)
+        gauss_2 = (gauss * (1- gaussian_features[:,5:6])).reshape(b, 64, 64)
         mask_logits= torch.stack([gauss_1, gauss_2], dim=1)
         mask_logits = torch.nn.functional.interpolate(mask_logits, size=(224, 224), mode='bicubic', align_corners=True)
 
