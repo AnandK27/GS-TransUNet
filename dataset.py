@@ -127,7 +127,7 @@ class MyDataSet_seg(data.Dataset):
 
         label = np.array(label)
         label = np.float32(label > 0)
-        print(type(label))
+
         name = datafiles["img"].split('/')[-1][:-4]
 
         return image.copy(), label.copy(), name
