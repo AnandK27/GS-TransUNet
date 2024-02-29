@@ -6,7 +6,7 @@ import numpy as np
 from PIL import Image
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
-import torchvision.transforms.functional as TF
+import scipy
 
 import torch
 from torch.utils import data
@@ -128,9 +128,12 @@ class MyDataSet_seg(data.Dataset):
         label = np.array(label)
         label = np.float32(label > 0)
 
+        center = np.array(scipy.ndimage.measurements.center_of_mass(label))
+        center = np.array([center[0] / self.crop_h, center[1] / self.crop_w])
+
         name = datafiles["img"].split('/')[-1][:-4]
 
-        return image.copy(), label.copy(), name
+        return image.copy(), label.copy(), name, center
 
 
 

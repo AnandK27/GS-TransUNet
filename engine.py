@@ -73,7 +73,7 @@ def trainer(args, model):
             test_flag = False
 
             model.train()
-            images, labels, name = batch
+            images, labels, name, centers = batch
 
             images, labels = random_resize(args, images, labels)
 
@@ -82,7 +82,7 @@ def trainer(args, model):
 
             optimizer.zero_grad()
             lr = adjust_learning_rate(args, optimizer, iter_num)
-            preds, dt_preds, cls_logits, attention_maps, ds_mask_logits = model(images)
+            preds, dt_preds, cls_logits, attention_maps, ds_mask_logits, gauss_features = model(images)
             cls_label = name_list_to_cls_label(name, label_dic)
 
             ### attention loss
@@ -139,6 +139,9 @@ def trainer(args, model):
             ### consistency loss
             consistency_loss = torch.mean(
                 (torch.cat((1 - dis_to_mask, dis_to_mask), 1) - preds) ** 2) 
+            
+            ### gauss center loss
+            gauss_center_loss = l1_loss(gauss_features[:, :2], centers)
 
             consistency_weight = get_current_consistency_weight(epoch)
 

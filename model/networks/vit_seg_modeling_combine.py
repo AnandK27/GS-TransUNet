@@ -558,7 +558,7 @@ class VisionTransformer(nn.Module):
         # dt_logits = self.dual_task_segmentation_head(dt_x)
         # dt_logits = self.tanh(dt_logits)
 
-        return mask_logits, dt_logits, cls_logits, attn_weights, ds_mask_logits
+        return mask_logits, dt_logits, cls_logits, attn_weights, ds_mask_logits, gaussian_features
 
     def load_from(self, weights):
         with torch.no_grad():

@@ -69,7 +69,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _ = model(data)
+            pred, _, cls_logits, att_maps, _, _ = model(data)
 
             now_att_maps = []
             # print(len(att_maps))
@@ -92,7 +92,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _ = model(data)
+            pred, _, cls_logits, att_maps, _, _ = model(data)
             pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
             result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
                 pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
@@ -106,7 +106,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _ = model(data)
+            pred, _, cls_logits, att_maps, _, _ = model(data)
             pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
             result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
                 pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
@@ -291,11 +291,11 @@ def val_mode_seg(valloader, model, path, epoch, test=False, visualize=False):
                 hor_flip = torch.flip(data, [-1])
                 ver_flip = torch.flip(data, [-2])
                 data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
-                pred, _, _, att_maps, _ = model(data)
+                pred, _, _, att_maps, _, _ = model(data)
                 pred = pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
                     pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
             else:
-                pred, _, _, _, _ = model(data)
+                pred, _, _, _, _, _ = model(data)
 
         pred = torch.softmax(pred, dim=1).cpu().data.numpy()
         pred_arg = np.argmax(pred[0], axis=0)
