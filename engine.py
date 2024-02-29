@@ -278,9 +278,9 @@ def trainer(args, model):
             # ############# Plot val curve
             # val_jac.append(np.nanmean(vjac_score))
             become_best_flag = False
-            if best_val_jac < np.nanmean(vjac_score):
-                best_val_jac = np.nanmean(vjac_score)
-                become_best_flag = True
+            # if best_val_jac < np.nanmean(vjac_score):
+            #     best_val_jac = np.nanmean(vjac_score)
+            #     become_best_flag = True
 
             become_cls_best = False
             if m_acc + s_acc >= best_cls:
