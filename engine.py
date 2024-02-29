@@ -79,6 +79,7 @@ def trainer(args, model):
 
             images = images.cuda()
             labels = labels.cuda().squeeze(1)
+            centers = centers.cuda()
 
             optimizer.zero_grad()
             lr = adjust_learning_rate(args, optimizer, iter_num)
