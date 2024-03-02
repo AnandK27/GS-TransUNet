@@ -264,7 +264,7 @@ def trainer(args, model):
 
         with torch.no_grad():
 
-            if epoch+1 % 50 == 0:
+            if epoch+1 % 10 == 0:
                 print('start test!')
 
                 [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
