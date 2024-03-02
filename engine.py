@@ -203,50 +203,49 @@ def trainer(args, model):
             #     (iter_num, loss.item(), consistency_loss.item(), loss_seg.item(), loss_sdf.item(), loss_seg_dice.item(),
             #      cls_loss.item(),
             #      attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
-            if iter_num == 1 and epoch%10 == 0:
-                tqdm.write('iteration %d : loss : %f, loss_consis: %f, loss_seg_ce: %f,  loss_haus: %f, loss_dice: %f, loss_cls: %f, att_loss: %f, cs_loss: %f, ds_loss: %f, ac_loss: %f' %\
-                    (iter_num, loss.item(), consistency_loss.item(), loss_seg.item(), loss_sdf.item(), loss_seg_dice.item(),
-                    cls_loss.item(), attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
+            if iter_num == 1 and epoch+1%10 == 0:
+                tqdm.write('Epoch: %d, Iteration: %d, Loss: %.4f' % (epoch, iter_num, loss.item()))
 
-            if iter_num % 20 == 0:
-                image = images[0, :, :, :]
-                image = (image - image.min()) / (image.max() - image.min())
-                writer.add_image('train/image', image, iter_num)
 
-                outputs = torch.argmax(torch.softmax(
-                    preds, dim=1), dim=1, keepdim=True)
-                writer.add_image('train/mask_pred',
-                                 outputs[0, ...] * 200, iter_num)
+            # if iter_num % 20 == 0:
+            #     image = images[0, :, :, :]
+            #     image = (image - image.min()) / (image.max() - image.min())
+            #     writer.add_image('train/image', image, iter_num)
 
-                writer.add_image('train/dt_to_mask',
-                                 dis_to_mask[0, ...] * 200, iter_num)
+            #     outputs = torch.argmax(torch.softmax(
+            #         preds, dim=1), dim=1, keepdim=True)
+            #     writer.add_image('train/mask_pred',
+            #                      outputs[0, ...] * 200, iter_num)
 
-                # print(labels[0,...].shape)
-                labs = labels[0, ...].unsqueeze(0) * 200
-                writer.add_image('train/mask_gt', labs, iter_num)
+            #     writer.add_image('train/dt_to_mask',
+            #                      dis_to_mask[0, ...] * 200, iter_num)
 
-                dis = gt_dis.unsqueeze(1)
-                dis = dis[0, :, :, :] * 200
-                dis = (dis - dis.min()) / (dis.max() - dis.min())
-                writer.add_image('train/dt_gt', dis, iter_num)
+            #     # print(labels[0,...].shape)
+            #     labs = labels[0, ...].unsqueeze(0) * 200
+            #     writer.add_image('train/mask_gt', labs, iter_num)
 
-                dt_pred = dt_preds[0, :, :, :] * 200
-                dt_pred = (dt_pred - dt_pred.min()) / (dt_pred.max() - dt_pred.min())
-                writer.add_image('train/dt_pred', dt_pred, iter_num)
+            #     dis = gt_dis.unsqueeze(1)
+            #     dis = dis[0, :, :, :] * 200
+            #     dis = (dis - dis.min()) / (dis.max() - dis.min())
+            #     writer.add_image('train/dt_gt', dis, iter_num)
 
-                ##### Unlabel
-                image = images[4, :, :, :]
-                image = (image - image.min()) / (image.max() - image.min())
-                writer.add_image('train/Unlabel_image', image, iter_num)
+            #     dt_pred = dt_preds[0, :, :, :] * 200
+            #     dt_pred = (dt_pred - dt_pred.min()) / (dt_pred.max() - dt_pred.min())
+            #     writer.add_image('train/dt_pred', dt_pred, iter_num)
 
-                outputs = torch.argmax(torch.softmax(
-                    preds, dim=1), dim=1, keepdim=True)
-                writer.add_image('train/Unlabel_mask_pred',
-                                 outputs[4, ...] * 200, iter_num)
+            #     ##### Unlabel
+            #     image = images[4, :, :, :]
+            #     image = (image - image.min()) / (image.max() - image.min())
+            #     writer.add_image('train/Unlabel_image', image, iter_num)
 
-                dt_pred = dt_preds[4, :, :, :] * 200
-                dt_pred = (dt_pred - dt_pred.min()) / (dt_pred.max() - dt_pred.min())
-                writer.add_image('train/Unlabel_dt_pred', dt_pred, iter_num)
+            #     outputs = torch.argmax(torch.softmax(
+            #         preds, dim=1), dim=1, keepdim=True)
+            #     writer.add_image('train/Unlabel_mask_pred',
+            #                      outputs[4, ...] * 200, iter_num)
+
+            #     dt_pred = dt_preds[4, :, :, :] * 200
+            #     dt_pred = (dt_pred - dt_pred.min()) / (dt_pred.max() - dt_pred.min())
+            #     writer.add_image('train/Unlabel_dt_pred', dt_pred, iter_num)
 
         ############# Start the validation
         if not test_flag:
@@ -265,7 +264,7 @@ def trainer(args, model):
 
         with torch.no_grad():
 
-            if epoch % 50 == 0:
+            if epoch+1 % 50 == 0:
                 print('start test!')
 
                 [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
