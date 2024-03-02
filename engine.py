@@ -199,7 +199,7 @@ def trainer(args, model):
             #      cls_loss.item(),
             #      attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
             
-            if iter_num == 1 and epoch % 10 == 0:
+            if iter_num == 1 and epoch+1 % 10 == 0:
                 tqdm.write('Epoch: %d, Iteration: %d, Loss: %.4f' % (epoch, iter_num, loss.item()))
 
             # if iter_num % 20 == 0:
@@ -258,7 +258,7 @@ def trainer(args, model):
                 writer.add_scalar('val/vjac_score', np.nanmean(vjac_score), epoch)
 
         with torch.no_grad():
-            if epoch % 50 == 0:
+            if epoch+1 % 50 == 0:
                 print('start test!')
 
                 [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
