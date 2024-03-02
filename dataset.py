@@ -244,8 +244,8 @@ def get_data(args):
 
     if 'isic' in data_str.lower():
         ############# Load training data
-        data_train_root = '/home/ank029/private/datasets/ISIC/Training_Data/'
-        data_train_add_root = '/home/ank029/private/datasets/ISIC/Training_Data/'
+        data_train_root = '/3d_data/datasets/skin_cancer/ISIC/Training_Data/'
+        data_train_add_root = '/3d_data/datasets/skin_cancer/ISIC/Training_Data/'
         train_dataset_label = MyDataSet_seg(data_train_root, None, crop_size=(args.w, args.h))
         train_dataset_unlabel = MyDataSet_seg(data_train_add_root, None, crop_size=(args.w, args.h),
                                               label=False)
@@ -258,14 +258,14 @@ def get_data(args):
         trainloader = data.DataLoader(train_data, batch_sampler=batch_sampler, num_workers=8, pin_memory=True)
 
         ############# Load val data
-        data_val_root = '/home/ank029/private/datasets/ISIC/Validation_Data/'
+        data_val_root = '/3d_data/datasets/skin_cancer/ISIC/Validation_Data/'
         valloader = data.DataLoader(MyValDataSet_seg(data_val_root, None, crop_size=(args.w, args.h)),
                                     batch_size=1, shuffle=False,
                                     num_workers=8,
                                     pin_memory=True)
 
         ############# Load testing data
-        data_test_root = '/home/ank029/private/datasets/ISIC/Test_Data/'
+        data_test_root = '/3d_data/datasets/skin_cancer/ISIC/Test_Data/'
         testloader = data.DataLoader(
             MyTestDataSet_seg(data_test_root, None, crop_size=(args.w, args.h)), batch_size=1,
             shuffle=False,
@@ -279,7 +279,7 @@ def get_data(args):
         }
 
     elif 'ph' in args.data_str.lower():
-        data_test_ph2_root = '/home/ank029/private/datasets/PH2Dataset/PH2 Dataset images'
+        data_test_ph2_root = '/3d_data/datasets/skin_cancer/PH2Dataset/PH2 Dataset images'
         # data_test_root_mask = 'Coarse_masks/Testing_EnhancedSN/'
         data_test_list = 'root for /ISIC/ph2_test.txt'
         testloader = data.DataLoader(
