@@ -51,7 +51,7 @@ def Jaccard(pred_arg, mask):
     y_true_f = mask.reshape(mask.shape[0] * mask.shape[1] * mask.shape[2], order='F')
     y_pred_f = pred_arg.reshape(pred_arg.shape[0] * pred_arg.shape[1] * pred_arg.shape[2], order='F')
 
-    intersection = np.float(np.sum(y_true_f * y_pred_f))
+    intersection = float(np.sum(y_true_f * y_pred_f))
     jac_score = intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection)
 
     return jac_score
