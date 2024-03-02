@@ -54,9 +54,9 @@ def get_cls_label(args):
 
     elif 'isic' in args.data:
         dic = {}
-        csv_files = ['/3d_data/datasets/skin_cancer/ISIC/Training_Data/ISIC-2017_Training_Part3_GroundTruth.csv', 
-                     '/3d_data/datasets/skin_cancer/ISIC/Validation_Data/ISIC-2017_Validation_Part3_GroundTruth.csv',
-                     '/3d_data/datasets/skin_cancer/ISIC/Test_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
+        csv_files = ['/3d_data/datasets/skin_cancer_1/ISIC/Training_Data/ISIC-2017_Training_Part3_GroundTruth.csv', 
+                     '/3d_data/datasets/skin_cancer_1/ISIC/Validation_Data/ISIC-2017_Validation_Part3_GroundTruth.csv',
+                     '/3d_data/datasets/skin_cancer_1/ISIC/Test_Data/ISIC-2017_Test_v2_Part3_GroundTruth.csv']
         for cls_file in csv_files:
             with open(cls_file, 'r') as csvfile:
                 csvreader = csv.reader(csvfile)
