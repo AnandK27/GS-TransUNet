@@ -198,11 +198,15 @@ def trainer(args, model):
             writer.add_scalar('loss/ds_loss', deep_loss_seg, iter_num)
             writer.add_scalar('loss/ac_loss', deep_loss_seg, iter_num)
 
-            logging.info(
-                'iteration %d : loss : %f, loss_consis: %f, loss_seg_ce: %f,  loss_haus: %f, loss_dice: %f, loss_cls: %f, att_loss: %f, cs_loss: %f, ds_loss: %f, ac_loss: %f' %
+            # logging.info(
+            #     'iteration %d : loss : %f, loss_consis: %f, loss_seg_ce: %f,  loss_haus: %f, loss_dice: %f, loss_cls: %f, att_loss: %f, cs_loss: %f, ds_loss: %f, ac_loss: %f' %
+            #     (iter_num, loss.item(), consistency_loss.item(), loss_seg.item(), loss_sdf.item(), loss_seg_dice.item(),
+            #      cls_loss.item(),
+            #      attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
+
+            tqdm.write('iteration %d : loss : %f, loss_consis: %f, loss_seg_ce: %f,  loss_haus: %f, loss_dice: %f, loss_cls: %f, att_loss: %f, cs_loss: %f, ds_loss: %f, ac_loss: %f' %\
                 (iter_num, loss.item(), consistency_loss.item(), loss_seg.item(), loss_sdf.item(), loss_seg_dice.item(),
-                 cls_loss.item(),
-                 attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
+                cls_loss.item(), attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
 
             if iter_num % 20 == 0:
                 image = images[0, :, :, :]
