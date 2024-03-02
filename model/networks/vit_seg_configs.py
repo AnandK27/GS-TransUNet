@@ -52,7 +52,7 @@ def get_r50_b16_config():
     config.resnet.width_factor = 1
 
     config.classifier = 'seg'
-    config.pretrained_path = '/home/ank029/private/pt-model/R50+ViT-B_16.npz'
+    config.pretrained_path = '/3d_data/datasets/skin_cancer/pt-model.npz'
     # config.pretrained_path = '/home/db/TransUNet-seg-cls/TransUNet-skin/vit_model/pretrain_weight_2012finetune/R50-ViT-B_16.npz'
     config.decoder_channels = (256, 128, 64, 16)
     config.skip_channels = [512, 256, 64, 64]
