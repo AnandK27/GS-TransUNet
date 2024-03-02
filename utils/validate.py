@@ -124,10 +124,10 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
         y_true_f = val_mask.reshape(val_mask.shape[0] * val_mask.shape[1], order='F')
         y_pred_f = pred_arg.reshape(pred_arg.shape[0] * pred_arg.shape[1], order='F')
 
-        intersection = np.float(np.sum(y_true_f * y_pred_f))
+        intersection = float(np.sum(y_true_f * y_pred_f))
         dice.append((2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f)))
         sen.append(intersection / np.sum(y_true_f))
-        intersection0 = np.float(np.sum((1 - y_true_f) * (1 - y_pred_f)))
+        intersection0 = float(np.sum((1 - y_true_f) * (1 - y_pred_f)))
         spe.append(intersection0 / np.sum(1 - y_true_f))
         acc.append(accuracy_score(y_true_f, y_pred_f))
         jac_score.append(intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection))
