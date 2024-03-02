@@ -510,7 +510,7 @@ class VisionTransformer(nn.Module):
             exit(0)
         res = torch.exp(torch.diagonal(-(x_c @ torch.inverse(sigmas) @ x_c.transpose(-1,-2)) /2, dim1=-1, dim2=-2))
         res = (res - res.min(dim=-1, keepdim=True)[0]) / (res.max(dim=-1, keepdim=True)[0] - res.min(dim=-1, keepdim=True)[0])
-        res[res < threshold] = 0
+        #res[res < threshold] = 0
         
         res = res.max(dim=-2)[0]
         return res
