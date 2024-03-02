@@ -260,43 +260,43 @@ def trainer(args, model):
                 writer.add_scalar('val/vjac_score', np.nanmean(vjac_score), epoch)
 
         with torch.no_grad():
-            # print('start test!')
+            print('start test!')
 
-            # [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
-            #                                                                                                testloader,
-            #                                                                                                model,
-            #                                                                                                './history/' + args.exp_name,
-            #                                                                                                test=True,
-            #                                                                                                ph2=args.ph2_test,
-            #                                                                                                logging=logging,
-            #                                                                                                cls_dic=label_dic)
-            # logging.info("test%d: tacc=%f, tdice=%f, tsensitivity=%f, tspecifity=%f, tjac=%f \n" % \
-            #              (epoch, np.nanmean(vacc), np.nanmean(vdice), np.nanmean(vsen), np.nanmean(vspe),
-            #               np.nanmean(vjac_score)))
-            # logging.info('cls_acc=%f, m_acc=%f, s_acc=%f' % (total_acc, m_acc, s_acc))
+            [vacc, vdice, vsen, vspe, vjac_score, total_acc, m_acc, s_acc, dic] = val_mode_seg_multi_scale(args,
+                                                                                                           testloader,
+                                                                                                           model,
+                                                                                                           './history/' + args.exp_name,
+                                                                                                           test=True,
+                                                                                                           ph2=args.ph2_test,
+                                                                                                           logging=logging,
+                                                                                                           cls_dic=label_dic)
+            logging.info("test%d: tacc=%f, tdice=%f, tsensitivity=%f, tspecifity=%f, tjac=%f \n" % \
+                         (epoch, np.nanmean(vacc), np.nanmean(vdice), np.nanmean(vsen), np.nanmean(vspe),
+                          np.nanmean(vjac_score)))
+            logging.info('cls_acc=%f, m_acc=%f, s_acc=%f' % (total_acc, m_acc, s_acc))
 
-            # # ############# Plot val curve
-            # # val_jac.append(np.nanmean(vjac_score))
-            # become_best_flag = False
-            # # if best_val_jac < np.nanmean(vjac_score):
-            # #     best_val_jac = np.nanmean(vjac_score)
-            # #     become_best_flag = True
+            # ############# Plot val curve
+            # val_jac.append(np.nanmean(vjac_score))
+            become_best_flag = False
+            # if best_val_jac < np.nanmean(vjac_score):
+            #     best_val_jac = np.nanmean(vjac_score)
+            #     become_best_flag = True
 
-            # become_cls_best = False
-            # if m_acc + s_acc >= best_cls:
-            #     best_cls = m_acc + s_acc
-            #     become_cls_best = True
+            become_cls_best = False
+            if m_acc + s_acc >= best_cls:
+                best_cls = m_acc + s_acc
+                become_cls_best = True
 
-            # # if epoch % 5 == 0:
-            # if become_best_flag:
-            #     # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
-            #     torch.save(model.state_dict(),
-            #                './history/' + args.exp_name + '/best_model.pth')
+            # if epoch % 5 == 0:
+            if become_best_flag:
+                # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
+                torch.save(model.state_dict(),
+                           './history/' + args.exp_name + '/best_model.pth')
 
-            # if become_cls_best:
-            #     # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
-            #     torch.save(model.state_dict(),
-            #                './history/' + args.exp_name + '/best_cls_model.pth')
+            if become_cls_best:
+                # torch.save(model.state_dict(), path + 'CoarseSN_e' + str(epoch) + '.pth')
+                torch.save(model.state_dict(),
+                           './history/' + args.exp_name + '/best_cls_model.pth')
 
             #remove the last epoch model
             for fname in os.listdir('./history/' + args.exp_name):
@@ -305,26 +305,26 @@ def trainer(args, model):
             torch.save(model.state_dict(),
                         './history/' + args.exp_name + f'/last_epoch_{epoch}.pth')
 
-            # writer.add_scalar('test/tacc', np.nanmean(vacc), epoch)
-            # writer.add_scalar('test/tdice', np.nanmean(vdice), epoch)
-            # writer.add_scalar('test/tsen', np.nanmean(vsen), epoch)
-            # writer.add_scalar('test/tspe', np.nanmean(vspe), epoch)
-            # writer.add_scalar('test/tjac_score', np.nanmean(vjac_score), epoch)
+            writer.add_scalar('test/tacc', np.nanmean(vacc), epoch)
+            writer.add_scalar('test/tdice', np.nanmean(vdice), epoch)
+            writer.add_scalar('test/tsen', np.nanmean(vsen), epoch)
+            writer.add_scalar('test/tspe', np.nanmean(vspe), epoch)
+            writer.add_scalar('test/tjac_score', np.nanmean(vjac_score), epoch)
 
-            # writer.add_scalar('test/cls_acc', total_acc, epoch)
-            # writer.add_scalar('test/cls_macc', m_acc, epoch)
-            # writer.add_scalar('test/cls_sacc', s_acc, epoch)
+            writer.add_scalar('test/cls_acc', total_acc, epoch)
+            writer.add_scalar('test/cls_macc', m_acc, epoch)
+            writer.add_scalar('test/cls_sacc', s_acc, epoch)
 
-            # writer.add_scalar('test/cls_mauc', dic['mauc'], epoch)
-            # writer.add_scalar('test/cls_msen', dic['msens'], epoch)
-            # writer.add_scalar('test/cls_mspec', dic['mspec'], epoch)
+            writer.add_scalar('test/cls_mauc', dic['mauc'], epoch)
+            writer.add_scalar('test/cls_msen', dic['msens'], epoch)
+            writer.add_scalar('test/cls_mspec', dic['mspec'], epoch)
 
-            # writer.add_scalar('test/cls_sauc', dic['sauc'], epoch)
-            # writer.add_scalar('test/cls_ssen', dic['ssens'], epoch)
-            # writer.add_scalar('test/cls_sspec', dic['sspec'], epoch)
+            writer.add_scalar('test/cls_sauc', dic['sauc'], epoch)
+            writer.add_scalar('test/cls_ssen', dic['ssens'], epoch)
+            writer.add_scalar('test/cls_sspec', dic['sspec'], epoch)
 
-            # writer.add_pr_curve('test/cls_mpr', dic['m_gt'], dic['m_pred_prob'], epoch)
-            # writer.add_pr_curve('test/cls_spr', dic['s_gt'], dic['s_pred_prob'], epoch)
+            writer.add_pr_curve('test/cls_mpr', dic['m_gt'], dic['m_pred_prob'], epoch)
+            writer.add_pr_curve('test/cls_spr', dic['s_gt'], dic['s_pred_prob'], epoch)
 
             if test_flag:
                 print('Finish Testing')
