@@ -18,7 +18,7 @@ def one_hot_embedding(labels, num_classes):
 
 
 
-def focal_loss(self, x, y, num_classes=3):
+def focal_loss(x, y, num_classes=3):
     '''Focal loss.
 
     Args:
