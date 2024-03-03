@@ -83,98 +83,98 @@ def trainer(args, model):
 
             optimizer.zero_grad()
             lr = adjust_learning_rate(args, optimizer, iter_num)
-            preds, dt_preds, cls_logits, attention_maps, ds_mask_logits, gauss_features = model(images)
+            cls_logits = model(images)
             cls_label = name_list_to_cls_label(name, label_dic)
 
             ### attention loss
-            last_att_maps = attention_maps[0]
-            last_att_maps = last_att_maps[:int(args.batch_size / 2), ...]
-            last_att_maps = torch.mean(last_att_maps, 1)[:, 0, 1:].view(int(args.batch_size / 2), 14, 14)  # 4 196
-            labels_resize = torch.nn.functional.interpolate(labels.unsqueeze(1), size=(14, 14), mode='nearest')[
-                            :int(args.batch_size / 2), ...]
-            labels_resize = labels_resize.squeeze(1)
-            attention_loss = ((1 - labels_resize) * last_att_maps).sum()
+            # last_att_maps = attention_maps[0]
+            # last_att_maps = last_att_maps[:int(args.batch_size / 2), ...]
+            # last_att_maps = torch.mean(last_att_maps, 1)[:, 0, 1:].view(int(args.batch_size / 2), 14, 14)  # 4 196
+            # labels_resize = torch.nn.functional.interpolate(labels.unsqueeze(1), size=(14, 14), mode='nearest')[
+            #                 :int(args.batch_size / 2), ...]
+            # labels_resize = labels_resize.squeeze(1)
+            # attention_loss = ((1 - labels_resize) * last_att_maps).sum()
 
-            ### cls seg consistency loss
-            last_att_maps = attention_maps[-1]
-            last_att_maps = torch.mean(last_att_maps, 1)[:, 0, 1:]  # 8 196
-            last_att_maps = last_att_maps * (1 / (last_att_maps.sum() + 1e-3))
-            preds_resize = torch.nn.functional.interpolate(preds[:, 1, ...].unsqueeze(1), size=(14, 14),
-                                                           mode='bilinear')  # 8 14 14
-            preds_resize = preds_resize.squeeze(1).view(args.batch_size, -1)  # 8 196
-            preds_resize = torch.softmax(preds_resize, 1)
-            cs_loss = ((last_att_maps - preds_resize) * (last_att_maps - preds_resize)).sum()
-
-            ### activate consistent loss
-            preds_softmax = torch.softmax(preds, 1)
-            preds_resize = torch.nn.functional.interpolate(preds_softmax[:, 1, ...].unsqueeze(1), size=(14, 14),
-                                                           mode='bilinear')  # 8 14 14
-            preds_resize = preds_resize.squeeze(1).view(args.batch_size, -1)  # 8 196
+            # ### cls seg consistency loss
+            # last_att_maps = attention_maps[-1]
+            # last_att_maps = torch.mean(last_att_maps, 1)[:, 0, 1:]  # 8 196
+            # last_att_maps = last_att_maps * (1 / (last_att_maps.sum() + 1e-3))
+            # preds_resize = torch.nn.functional.interpolate(preds[:, 1, ...].unsqueeze(1), size=(14, 14),
+            #                                                mode='bilinear')  # 8 14 14
+            # preds_resize = preds_resize.squeeze(1).view(args.batch_size, -1)  # 8 196
             # preds_resize = torch.softmax(preds_resize, 1)
-            ac_loss = - (last_att_maps * preds_resize).sum()
+            # cs_loss = ((last_att_maps - preds_resize) * (last_att_maps - preds_resize)).sum()
 
-            ### deep supervision loss
-            label_resize = torch.nn.functional.interpolate(labels.unsqueeze(1), size=(14, 14),
-                                                           mode='nearest')  # 8 14 14
-            label_resize = label_resize.squeeze(1)
-            deep_loss_seg = ce_loss(
-                ds_mask_logits[:int(args.batch_size / 2), ...], label_resize[:int(args.batch_size / 2), ...].long())
+            # ### activate consistent loss
+            # preds_softmax = torch.softmax(preds, 1)
+            # preds_resize = torch.nn.functional.interpolate(preds_softmax[:, 1, ...].unsqueeze(1), size=(14, 14),
+            #                                                mode='bilinear')  # 8 14 14
+            # preds_resize = preds_resize.squeeze(1).view(args.batch_size, -1)  # 8 196
+            # # preds_resize = torch.softmax(preds_resize, 1)
+            # ac_loss = - (last_att_maps * preds_resize).sum()
 
-            ### sdf seg dice loss
-            with torch.no_grad():
-                gt_dis = compute_sdf(labels[:int(args.batch_size / 2)].cpu(
-                ).numpy(), dt_preds[:int(args.batch_size / 2), 0, ...].shape)
-                gt_dis = torch.from_numpy(gt_dis).float().cuda()
-            loss_sdf = mse_loss(dt_preds[:int(args.batch_size / 2), 0, ...], gt_dis)
-            loss_seg = ce_loss(
-                preds[:int(args.batch_size / 2), ...], labels[:int(args.batch_size / 2), ...].long())
-            loss_label_smooth_ce_seg = label_smooth_ce_loss(preds[:int(args.batch_size / 2), ...],
-                                                            labels[:int(args.batch_size / 2), ...].long())
-            loss_seg_dice = dice_loss(
-                preds[:int(args.batch_size / 2), 0, :, :], labels[:int(args.batch_size / 2)] == 0)
-            dis_to_mask = torch.sigmoid(-1500 * dt_preds)
+            # ### deep supervision loss
+            # label_resize = torch.nn.functional.interpolate(labels.unsqueeze(1), size=(14, 14),
+            #                                                mode='nearest')  # 8 14 14
+            # label_resize = label_resize.squeeze(1)
+            # deep_loss_seg = ce_loss(
+            #     ds_mask_logits[:int(args.batch_size / 2), ...], label_resize[:int(args.batch_size / 2), ...].long())
+
+            # ### sdf seg dice loss
+            # with torch.no_grad():
+            #     gt_dis = compute_sdf(labels[:int(args.batch_size / 2)].cpu(
+            #     ).numpy(), dt_preds[:int(args.batch_size / 2), 0, ...].shape)
+            #     gt_dis = torch.from_numpy(gt_dis).float().cuda()
+            # loss_sdf = mse_loss(dt_preds[:int(args.batch_size / 2), 0, ...], gt_dis)
+            # loss_seg = ce_loss(
+            #     preds[:int(args.batch_size / 2), ...], labels[:int(args.batch_size / 2), ...].long())
+            # loss_label_smooth_ce_seg = label_smooth_ce_loss(preds[:int(args.batch_size / 2), ...],
+            #                                                 labels[:int(args.batch_size / 2), ...].long())
+            # loss_seg_dice = dice_loss(
+            #     preds[:int(args.batch_size / 2), 0, :, :], labels[:int(args.batch_size / 2)] == 0)
+            # dis_to_mask = torch.sigmoid(-1500 * dt_preds)
 
             ### cls loss
             cls_loss = ce_loss(cls_logits, cls_label)
 
-            ### consistency loss
-            consistency_loss = torch.mean(
-                (torch.cat((1 - dis_to_mask, dis_to_mask), 1) - preds) ** 2) 
+            # ### consistency loss
+            # consistency_loss = torch.mean(
+            #     (torch.cat((1 - dis_to_mask, dis_to_mask), 1) - preds) ** 2) 
             
-            ### gauss center loss
-            gauss_center_loss = l1_loss(gauss_features[:, :2], centers)
+            # ### gauss center loss
+            # gauss_center_loss = l1_loss(gauss_features[:, :2], centers)
 
-            consistency_weight = get_current_consistency_weight(epoch)
+            # consistency_weight = get_current_consistency_weight(epoch)
 
             ### calculate the total loss function
-            if args.train_mode == 'seg_only':
-                loss = loss_label_smooth_ce_seg 
-            elif args.train_mode == 'cls_only':
-                loss = cls_loss
-            elif args.train_mode == 'seg+cls':
-                if iter_num <= args.cls_late:
-                    loss = loss_label_smooth_ce_seg
-                else:
-                    loss = loss_label_smooth_ce_seg + args.cls_weight * cls_loss
-            elif args.train_mode == 'seg+dual':
-                loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf
-            elif args.train_mode == 'seg+cls+dual':
-                if iter_num <= args.cls_late:
-                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + gauss_center_loss
-                else:
-                    loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + args.cls_weight * cls_loss + gauss_center_loss
+            # if args.train_mode == 'seg_only':
+            #     loss = loss_label_smooth_ce_seg 
+            # elif args.train_mode == 'cls_only':
+            loss = cls_loss
+            # elif args.train_mode == 'seg+cls':
+            #     if iter_num <= args.cls_late:
+            #         loss = loss_label_smooth_ce_seg
+            #     else:
+            #         loss = loss_label_smooth_ce_seg + args.cls_weight * cls_loss
+            # elif args.train_mode == 'seg+dual':
+            #     loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf
+            # elif args.train_mode == 'seg+cls+dual':
+            #     if iter_num <= args.cls_late:
+            #         loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + gauss_center_loss
+            #     else:
+            #         loss = loss_label_smooth_ce_seg + consistency_weight * consistency_loss + args.consis_weight * loss_sdf + args.cls_weight * cls_loss + gauss_center_loss
 
-            if args.att_loss != 0:
-                loss += args.att_loss * attention_loss
+            # if args.att_loss != 0:
+            #     loss += args.att_loss * attention_loss
 
-            if args.cs_loss != 0:
-                loss += args.cs_loss * cs_loss
+            # if args.cs_loss != 0:
+            #     loss += args.cs_loss * cs_loss
 
-            if args.ds != 0:
-                loss += args.ds * deep_loss_seg
+            # if args.ds != 0:
+            #     loss += args.ds * deep_loss_seg
 
-            if args.ac_loss != 0:
-                loss += args.ac_loss * ac_loss
+            # if args.ac_loss != 0:
+            #     loss += args.ac_loss * ac_loss
 
             if torch.isnan(loss):
                 continue
@@ -186,17 +186,17 @@ def trainer(args, model):
 
             writer.add_scalar('lr', lr, iter_num)
             writer.add_scalar('loss/loss', loss, iter_num)
-            writer.add_scalar('loss/loss_seg', loss_seg, iter_num)
-            writer.add_scalar('loss/loss_dice', loss_seg_dice, iter_num)
-            writer.add_scalar('loss/loss_label_smooth_ce_seg', loss_label_smooth_ce_seg, iter_num)
-            writer.add_scalar('loss/loss_hausdorff', loss_sdf, iter_num)
-            writer.add_scalar('loss/consistency_weight', consistency_weight, iter_num)
-            writer.add_scalar('loss/consistency_loss', consistency_loss, iter_num)
-            writer.add_scalar('loss/cls_loss', cls_loss, iter_num)
-            writer.add_scalar('loss/att_loss', attention_loss, iter_num)
-            writer.add_scalar('loss/cs_loss', cs_loss, iter_num)
-            writer.add_scalar('loss/ds_loss', deep_loss_seg, iter_num)
-            writer.add_scalar('loss/ac_loss', deep_loss_seg, iter_num)
+            # writer.add_scalar('loss/loss_seg', loss_seg, iter_num)
+            # writer.add_scalar('loss/loss_dice', loss_seg_dice, iter_num)
+            # writer.add_scalar('loss/loss_label_smooth_ce_seg', loss_label_smooth_ce_seg, iter_num)
+            # writer.add_scalar('loss/loss_hausdorff', loss_sdf, iter_num)
+            # writer.add_scalar('loss/consistency_weight', consistency_weight, iter_num)
+            # writer.add_scalar('loss/consistency_loss', consistency_loss, iter_num)
+            # writer.add_scalar('loss/cls_loss', cls_loss, iter_num)
+            # writer.add_scalar('loss/att_loss', attention_loss, iter_num)
+            # writer.add_scalar('loss/cs_loss', cs_loss, iter_num)
+            # writer.add_scalar('loss/ds_loss', deep_loss_seg, iter_num)
+            # writer.add_scalar('loss/ac_loss', deep_loss_seg, iter_num)
 
             # logging.info(
             #     'iteration %d : loss : %f, loss_consis: %f, loss_seg_ce: %f,  loss_haus: %f, loss_dice: %f, loss_cls: %f, att_loss: %f, cs_loss: %f, ds_loss: %f, ac_loss: %f' %

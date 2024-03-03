@@ -12,11 +12,6 @@ from utils.runtime import get_cls_label, name_list_to_cls_label
 from utils.metrics import cla_evaluate
 
 def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize=False, ph2=False, logging=None, cls_dic=None):
-    dice = []
-    sen = []
-    spe = []
-    tacc = []
-    jac_score = []
 
     if not os.path.exists(os.path.join(path, 'image')):
         os.mkdir(os.path.join(path, 'image'))
@@ -69,19 +64,19 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _, _ = model(data)
+            cls_logits = model(data)
 
-            now_att_maps = []
-            # print(len(att_maps))
-            # print(att_maps)
-            for i in att_maps:
-                # print(i.shape)
-                now_att_maps.append(torch.mean(i[0, ...], 0).cpu())
-            att_collection.append(now_att_maps)
+            # now_att_maps = []
+            # # print(len(att_maps))
+            # # print(att_maps)
+            # for i in att_maps:
+            #     # print(i.shape)
+            #     now_att_maps.append(torch.mean(i[0, ...], 0).cpu())
+            # att_collection.append(now_att_maps)
 
-            pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
-            result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
-                pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
+            # pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
+            # result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
+            #     pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
             cls_result += cls_logits
 
             data = data1
@@ -92,10 +87,10 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _, _ = model(data)
-            pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
-            result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
-                pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
+            cls_logits = model(data)
+            # pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
+            # result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
+            #     pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
             cls_result += cls_logits
 
             data = data2
@@ -106,40 +101,40 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
             ver_flip = torch.flip(data, [-2])
             data = torch.cat([data, rot_90, rot_180, rot_270, hor_flip, ver_flip], dim=0)  # 做了六种数据增强
             data = F.interpolate(data, size=(args.w, args.h), mode='bicubic')
-            pred, _, cls_logits, att_maps, _, _ = model(data)
-            pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
-            result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
-                pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
+            cls_logits = model(data)
+            # pred = F.interpolate(pred, size=(args.w, args.h), mode='bicubic')
+            # result += pred[0:1] + torch.rot90(pred[1:2], 3, [2, 3]) + torch.rot90(pred[2:3], 2, [2, 3]) + torch.rot90(
+            #     pred[3:4], 1, [2, 3]) + torch.flip(pred[4:5], [-1]) + torch.flip(pred[5:6], [-2])
             cls_result += cls_logits
 
-        time1 = time.time()
-        if args.print_time:
-            print(f'time: {time1 - time0}')
+        # time1 = time.time()
+        # if args.print_time:
+        #     print(f'time: {time1 - time0}')
 
-        pred = result
-        pred = torch.softmax(pred, dim=1).cpu().data.numpy()
-        pred_arg = np.argmax(pred[0], axis=0)
+        # pred = result
+        # pred = torch.softmax(pred, dim=1).cpu().data.numpy()
+        # pred_arg = np.argmax(pred[0], axis=0)
 
-        # y_pred
-        y_true_f = val_mask.reshape(val_mask.shape[0] * val_mask.shape[1], order='F')
-        y_pred_f = pred_arg.reshape(pred_arg.shape[0] * pred_arg.shape[1], order='F')
+        # # y_pred
+        # y_true_f = val_mask.reshape(val_mask.shape[0] * val_mask.shape[1], order='F')
+        # y_pred_f = pred_arg.reshape(pred_arg.shape[0] * pred_arg.shape[1], order='F')
 
-        intersection = float(np.sum(y_true_f * y_pred_f))
-        dice.append((2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f)))
-        sen.append(intersection / np.sum(y_true_f))
-        intersection0 = float(np.sum((1 - y_true_f) * (1 - y_pred_f)))
-        spe.append(intersection0 / np.sum(1 - y_true_f))
-        tacc.append(accuracy_score(y_true_f, y_pred_f))
-        jac_score.append(intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection))
+        # intersection = float(np.sum(y_true_f * y_pred_f))
+        # dice.append((2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f)))
+        # sen.append(intersection / np.sum(y_true_f))
+        # intersection0 = float(np.sum((1 - y_true_f) * (1 - y_pred_f)))
+        # spe.append(intersection0 / np.sum(1 - y_true_f))
+        # tacc.append(accuracy_score(y_true_f, y_pred_f))
+        # jac_score.append(intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection))
 
         cls_result = torch.mean(cls_result, 0)
         index = torch.argmax(cls_result)
         cls_prob = torch.softmax(cls_result, 0)
 
-        di = (2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f))
-        ja = intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection)
-        f.write(
-            f'Index: {image_index} Dice: {di} JA: {ja} CLS_PRED: {index} CLS_GT: {int(cls_gt)} CLS_PROB: {str(cls_prob)}\n')
+        # di = (2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f))
+        # ja = intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection)
+        # f.write(
+        #     f'Index: {image_index} Dice: {di} JA: {ja} CLS_PRED: {index} CLS_GT: {int(cls_gt)} CLS_PROB: {str(cls_prob)}\n')
 
         if cls_gt == 0:
             m_gt.append(0)
