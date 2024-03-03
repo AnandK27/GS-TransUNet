@@ -54,7 +54,7 @@ sys.path.append('./model/networks')
 model_name = 'efficientnet_v2_l'
 model_weights = "IMAGENET1K_V1"
 model = torch.hub.load("pytorch/vision", model_name, weights=model_weights).cuda()
-model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Flatten(),torch.nn.Linear(1280, 1), torch.nn.Sigmoid()).cuda()
+model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Flatten(),torch.nn.Linear(1280, 3), torch.nn.Sigmoid()).cuda()
 model = torch.nn.DataParallel(model)
 
 if __name__ == '__main__':
