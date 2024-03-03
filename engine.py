@@ -203,7 +203,7 @@ def trainer(args, model):
             #     (iter_num, loss.item(), consistency_loss.item(), loss_seg.item(), loss_sdf.item(), loss_seg_dice.item(),
             #      cls_loss.item(),
             #      attention_loss.item(), cs_loss.item(), deep_loss_seg.item(), ac_loss.item()))
-            if iter_num == 1:
+            if i_iter == 1:
                 logging.info('Epoch: %d, Iteration: %d, Loss: %.4f' % (epoch, iter_num, loss.item()))
 
 
