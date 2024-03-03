@@ -189,8 +189,8 @@ class MyTestDataSet_seg(data.Dataset):
         self.list_path = list_path
         self.crop_h, self.crop_w = crop_size
 
-        self.ids = [i for i in os.listdir(os.path.join(self.root_path, 'ISIC-2017_Test_v2_Data')) if i.endswith('JPG') or i.endswith('jpg')]
-        self.img_ids = [f'/ISIC-2017_Test_v2_Data/{i} /ISIC-2017_Test_v2_Part1_GroundTruth/{i[:-4]}_segmentation.png' for i in self.ids]
+        self.ids = [i for i in os.listdir(os.path.join(self.root_path, 'ISIC-2017_Validation_Data')) if i.endswith('JPG') or i.endswith('jpg')]
+        self.img_ids = [f'/ISIC-2017_Validation_Data/{i} /ISIC-2017_Validation_Part1_GroundTruth/{i[:-4]}_segmentation.png' for i in self.ids]
 
         self.files = []
         for index, name in enumerate(self.img_ids):
@@ -272,7 +272,7 @@ def get_data(args):
                                     pin_memory=True)
 
         ############# Load testing data
-        data_test_root = '/3d_data/datasets/skin_cancer_1/ISIC/Test_Data/'
+        data_test_root = '/3d_data/datasets/skin_cancer_1/ISIC/Validation_Data/'
         testloader = data.DataLoader(
             MyTestDataSet_seg(data_test_root, None, crop_size=(args.w, args.h)), batch_size=1,
             shuffle=False,
