@@ -15,7 +15,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
     dice = []
     sen = []
     spe = []
-    acc = []
+    tacc = []
     jac_score = []
 
     if not os.path.exists(os.path.join(path, 'image')):
@@ -129,7 +129,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
         sen.append(intersection / np.sum(y_true_f))
         intersection0 = float(np.sum((1 - y_true_f) * (1 - y_pred_f)))
         spe.append(intersection0 / np.sum(1 - y_true_f))
-        acc.append(accuracy_score(y_true_f, y_pred_f))
+        tacc.append(accuracy_score(y_true_f, y_pred_f))
         jac_score.append(intersection / (np.sum(y_true_f) + np.sum(y_pred_f) - intersection))
 
         cls_result = torch.mean(cls_result, 0)
@@ -256,7 +256,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
     f.close()
     print('successfully record!')
 
-    return np.array(acc), np.array(dice), np.array(sen), np.array(spe), np.array(
+    return np.array(tacc), np.array(dice), np.array(sen), np.array(spe), np.array(
         jac_score), total_acc, m_acc, s_acc, dic
 
 
