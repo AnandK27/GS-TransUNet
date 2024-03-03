@@ -1,8 +1,20 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from utils import one_hot_embedding
 from torch.autograd import Variable
+
+def one_hot_embedding(labels, num_classes):
+    '''Embedding labels to one-hot form.
+
+    Args:
+      labels: (LongTensor) class labels, sized [N,].
+      num_classes: (int) number of classes.
+
+    Returns:
+      (tensor) encoded labels, sized [N,#classes].
+    '''
+    y = torch.eye(num_classes)  # [D,D]
+    return y[labels]            # [N,D]
 
 class FocalLoss(nn.Module):
     def __init__(self, num_classes=20):
