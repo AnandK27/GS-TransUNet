@@ -209,17 +209,17 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
                 s_pred_prob.append(cls_prob[2].cpu().detach())
 
 
-        index_str = str(int(image_index))
-        while len(index_str) < 4:
-            index_str = '0' + index_str
+        # index_str = str(int(image_index))
+        # while len(index_str) < 4:
+        #     index_str = '0' + index_str
 
-        if True:
-            data = data[0].cpu()
-            img = to_img(data)
-            img.save(os.path.join(path, 'image/{}.png'.format(name[0].split('.')[0])))
-            cv2.imwrite(os.path.join(path, 'image/{}_pred.png'.format(name[0].split('.')[0])), pred_arg * 255)
-            cv2.imwrite(os.path.join(path, 'image/{}_gt.png'.format(name[0].split('.')[0])), val_mask * 255)
-            f.write('{} {}\n'.format(index_str, (2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f))))
+        # if True:
+        #     data = data[0].cpu()
+        #     img = to_img(data)
+        #     img.save(os.path.join(path, 'image/{}.png'.format(name[0].split('.')[0])))
+        #     cv2.imwrite(os.path.join(path, 'image/{}_pred.png'.format(name[0].split('.')[0])), pred_arg * 255)
+        #     cv2.imwrite(os.path.join(path, 'image/{}_gt.png'.format(name[0].split('.')[0])), val_mask * 255)
+        #     f.write('{} {}\n'.format(index_str, (2. * intersection) / (np.sum(y_true_f) + np.sum(y_pred_f))))
 
     print('Test nevus: {} / {}'.format(nevus[0], nevus[1]))
     print('Test melanoma: {} / {}'.format(melanoma[0], melanoma[1]))
@@ -251,8 +251,7 @@ def val_mode_seg_multi_scale(args, valloader, model, path, test=False, visualize
     f.close()
     print('successfully record!')
 
-    return np.array(tacc), np.array(dice), np.array(sen), np.array(spe), np.array(
-        jac_score), total_acc, m_acc, s_acc, dic
+    return total_acc, m_acc, s_acc, dic
 
 
 def val_mode_seg(valloader, model, path, epoch, test=False, visualize=False):
