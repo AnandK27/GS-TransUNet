@@ -24,7 +24,7 @@ parser.add_argument('--epoch', type=int, default=450)
 parser.add_argument('--label_data', type=int, default=2000)
 parser.add_argument('--unlabel_data', type=int, default=1320)
 parser.add_argument('--max_iter', type=int, default=40000)
-parser.add_argument('--seg_only', action='store_true', default=True)
+parser.add_argument('--seg_only', action='store_true')
 parser.add_argument('--consis_weight', type=float, default=5.0)
 parser.add_argument('--cls_weight', type=float, default=0.25)
 parser.add_argument('--swin', action='store_true')
@@ -51,7 +51,7 @@ args = parser.parse_args()
 
 sys.path.append('./model')
 sys.path.append('./model/networks')
-model_name = 'efficientnet_v2_l' if args.seg_only else 'regnet_y_32gf'
+model_name = 'efficientnet_v2_l' if not args.seg_only else 'regnet_y_32gf'
 model_weights = "IMAGENET1K_V1"
 model = torch.hub.load("pytorch/vision", model_name, weights=model_weights).cuda()
 model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Flatten(),torch.nn.Linear(1280, 3), torch.nn.Sigmoid()).cuda()
