@@ -17,13 +17,14 @@ from utils.metrics import compute_sdf, dice_loss
 from utils.learning_rate import adjust_learning_rate, get_current_consistency_weight
 from utils.runtime import random_resize, get_cls_label, name_list_to_cls_label
 from utils.validate import val_mode_seg, val_mode_seg_multi_scale
-from utils.loss import MyLabelSmoothingLoss
+from utils.loss import MyLabelSmoothingLoss, FocalLoss
 
 
 # get loss function
 mse_loss = nn.MSELoss()
 l1_loss = nn.L1Loss()
 ce_loss = nn.CrossEntropyLoss()
+focal_loss = FocalLoss(num_classes=3)
 weight_ce_loss_for_class_m = nn.CrossEntropyLoss(weight=torch.Tensor([1.0, 1.0, 1.0])).cuda()  # 第1类的权重调高
 label_smooth_ce_loss = MyLabelSmoothingLoss(classes=2, smoothing=0.0)
 
@@ -135,7 +136,7 @@ def trainer(args, model):
             dis_to_mask = torch.sigmoid(-1500 * dt_preds)
 
             ### cls loss
-            cls_loss = ce_loss(cls_logits, cls_label)
+            cls_loss = focal_loss(cls_logits, cls_label)
 
             ### consistency loss
             consistency_loss = torch.mean(
