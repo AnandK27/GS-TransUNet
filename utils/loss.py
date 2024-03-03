@@ -17,7 +17,7 @@ def one_hot_embedding(labels, num_classes):
     return y[labels]            # [N,D]
 
 
-def focal_loss(x, y):
+def focal_loss(x, y, num_classes= 3):
     '''Focal loss.
 
     Args:
@@ -30,7 +30,7 @@ def focal_loss(x, y):
     alpha = 0.25
     gamma = 2
 
-    t = one_hot_embedding(y.data.cpu(), self.num_classes)  # [N,21]
+    t = one_hot_embedding(y.data.cpu(), num_classes)  # [N,21]
     t = Variable(t).cuda()  # [N,20]
 
     p = x.sigmoid()
