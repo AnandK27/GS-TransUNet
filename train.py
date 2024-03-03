@@ -51,7 +51,10 @@ args = parser.parse_args()
 
 sys.path.append('./model')
 sys.path.append('./model/networks')
-from model.train import net as model
+model_name = 'efficientnet_v2_l'
+model_weights = "IMAGENET1K_V1"
+model = torch.hub.load("pytorch/vision", model_name, weights=model_weights).cuda()
+model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Linear(), torch.nn.Sigmoid()).cuda()
 model = torch.nn.DataParallel(model)
 
 if __name__ == '__main__':
