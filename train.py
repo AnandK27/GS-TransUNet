@@ -52,9 +52,10 @@ args = parser.parse_args()
 sys.path.append('./model')
 sys.path.append('./model/networks')
 model_name = 'efficientnet_v2_l' if not args.seg_only else 'regnet_y_32gf'
+size = 3712 if args.seg_only else 1280
 model_weights = "IMAGENET1K_V1"
 model = torch.hub.load("pytorch/vision", model_name, weights=model_weights).cuda()
-model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Flatten(),torch.nn.Linear(1280, 3), torch.nn.Sigmoid()).cuda()
+model = torch.nn.Sequential(*(list(model.children())[:-1]), torch.nn.Flatten(),torch.nn.Linear(size, 3), torch.nn.Sigmoid()).cuda()
 model = torch.nn.DataParallel(model)
 
 if __name__ == '__main__':
