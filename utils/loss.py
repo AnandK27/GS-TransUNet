@@ -21,7 +21,7 @@ class FocalLoss(nn.Module):
         super(FocalLoss, self).__init__()
         self.num_classes = num_classes
 
-    def focal_loss(self, x, y):
+    def forward(self, x, y):
         '''Focal loss.
 
         Args:
