@@ -135,7 +135,7 @@ def trainer(args, model):
             dis_to_mask = torch.sigmoid(-1500 * dt_preds)
 
             ### cls loss
-            cls_loss = ce_loss(cls_logits, cls_label)
+            cls_loss = focal_loss(cls_logits, cls_label)
 
             ### consistency loss
             consistency_loss = torch.mean(
