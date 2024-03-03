@@ -272,7 +272,7 @@ def get_data(args):
                                     pin_memory=True)
 
         ############# Load testing data
-        data_test_root = '/3d_data/datasets/skin_cancer_1/ISIC/Test_Data/'
+        data_test_root = '/3d_data/datasets/skin_cancer_1/ISIC/Validation_Data/'
         testloader = data.DataLoader(
             MyTestDataSet_seg(data_test_root, None, crop_size=(args.w, args.h)), batch_size=1,
             shuffle=False,
