@@ -243,19 +243,19 @@ def trainer(args, model):
             #     writer.add_image('train/Unlabel_dt_pred', dt_pred, iter_num)
 
         ############# Start the validation
-        if not test_flag:
-            with torch.no_grad():
-                print('start val!')
-                [vacc, vdice, vsen, vspe, vjac_score] = val_mode_seg(valloader, model, './history/'+ args.exp_name, epoch)
-                logging.info("val%d: vacc=%f, vdice=%f, vsensitivity=%f, vspecifity=%f, vjac=%f \n" % \
-                             (epoch, np.nanmean(vacc), np.nanmean(vdice), np.nanmean(vsen), np.nanmean(vspe),
-                              np.nanmean(vjac_score)))
+        # if not test_flag:
+        #     with torch.no_grad():
+        #         print('start val!')
+        #         [vacc, vdice, vsen, vspe, vjac_score] = val_mode_seg(valloader, model, './history/'+ args.exp_name, epoch)
+        #         logging.info("val%d: vacc=%f, vdice=%f, vsensitivity=%f, vspecifity=%f, vjac=%f \n" % \
+        #                      (epoch, np.nanmean(vacc), np.nanmean(vdice), np.nanmean(vsen), np.nanmean(vspe),
+        #                       np.nanmean(vjac_score)))
 
-                writer.add_scalar('val/vacc', np.nanmean(vacc), epoch)
-                writer.add_scalar('val/vdice', np.nanmean(vdice), epoch)
-                writer.add_scalar('val/vsen', np.nanmean(vsen), epoch)
-                writer.add_scalar('val/vspe', np.nanmean(vspe), epoch)
-                writer.add_scalar('val/vjac_score', np.nanmean(vjac_score), epoch)
+        #         writer.add_scalar('val/vacc', np.nanmean(vacc), epoch)
+        #         writer.add_scalar('val/vdice', np.nanmean(vdice), epoch)
+        #         writer.add_scalar('val/vsen', np.nanmean(vsen), epoch)
+        #         writer.add_scalar('val/vspe', np.nanmean(vspe), epoch)
+        #         writer.add_scalar('val/vjac_score', np.nanmean(vjac_score), epoch)
 
         with torch.no_grad():
             if (epoch+1)%10 == 0:
