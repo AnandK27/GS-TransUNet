@@ -43,9 +43,24 @@ Please prepare an environment with python=3.7, and then use the command "pip ins
 ```bash
 CUDA_VISIBLE_DEVICES=0 python train.py --xp_name gauss
 ```
-Once training is done the script automatically runs test.
+Once training is done, the script automatically runs test.
 
-## Results (to be added)
+## Citation
+
+If you use GS-TransUNet in your research, please cite our paper:
+
+```bibtex
+@inproceedings{kumar2024gstransunet,
+  author = {Kumar, Anand and Kavinder Roghit, Kanthen and John, Josna},
+  booktitle = {Medical Imaging 2025: AI/ML},
+  organization = {SPIE},
+  title = {GS-TransUNet: integrated 2D Gaussian splatting and transformer UNet for accurate skin lesion analysis},
+  month = nov,
+  year = {2024},
+  doi = {10.1117/12.3046869}
+}
+```
+
 
 ## Reference
 * [TransUNet](https://arxiv.org/pdf/2102.04306)
