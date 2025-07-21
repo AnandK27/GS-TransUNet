@@ -1,4 +1,4 @@
-# GS-TransUNet 🩺✨
+# GS-TransUNet (SPIE Medical Imaging '25)🩺✨
 ## *Integrated 2D Gaussian Splatting and Transformer UNet for Accurate Skin Lesion Analysis*
 
 <div align="center">
