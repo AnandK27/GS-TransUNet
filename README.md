@@ -3,8 +3,7 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2502.16748-b31b1b.svg)](https://arxiv.org/abs/2502.16748)
 [![Code](https://img.shields.io/badge/Code-GitHub-green)](https://github.com/AnandK27/GS-TransUNet)
 
-Anand Kumar, Kavinder Roghit Kanthen, Josna John <br>
-This is the official code for the paper "GS-TransUNet: Gaussian splatting skin lesion analysis"
+<span style="color:grey;"> Anand Kumar, Kavinder Roghit Kanthen, Josna John</span> <br>
 
 ## Abstract
   This research aims to develop a more effective and accurate automated diagnostic tool for skin cancer
