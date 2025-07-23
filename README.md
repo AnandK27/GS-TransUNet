@@ -4,6 +4,7 @@
 <div align="center">
 
 [![arXiv](https://img.shields.io/badge/arXiv-2502.16748-b31b1b.svg?style=for-the-badge)](https://arxiv.org/abs/2502.16748)
+[![Project Page](https://img.shields.io/badge/Project-Page-blue?style=for-the-badge)](https://anandk27.github.io/GS_Trans_UNet)
 [![Code](https://img.shields.io/badge/Code-GitHub-green?style=for-the-badge&logo=github)](https://github.com/AnandK27/GS-TransUNet)
 
 </div>
